@@ -31,7 +31,7 @@ public class InformationRdController {
 		map.put("1", new String[]{"OA通知",
 				"<div class=\"tips green\"><i class=\"fa fa-pencil-square-o\"></i></div>",
 				"/defaultroot/notification/oaNotificationPage.controller"
-				});// 分别代表的是栏目的名称 样式 及url
+				}); // 分别代表的是栏目的名称 样式 及url
 		map.put("2", new String[]{"门户通知",
 				"<div class=\"tips orange\"><i class=\"fa fa-share-alt\"></i></div>",
 				"/defaultroot/information/channelList.controller?channelId=6695&channelName=通知通告"
