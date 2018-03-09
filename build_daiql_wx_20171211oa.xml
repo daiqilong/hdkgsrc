@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- default是默认要执行的动作 -->
+<project name="phc" default="compile" basedir=".">
+	<property environment="env" />
+	<!-- 源代码文件路径 -->
+	<property name="build.PatchName" value="华东空管局_daiql_wx_20171211oa" /> <!-- 要打的oa的补丁包,存放在D盘根目录下 【修改此处】 -->
+	<!-- jboss的安装路径 -->
+	<property name="jboss.home" value="D:/application/jboss-4.2.3.GA"/>   <!-- 如果要编译EJB文件，需要指定jboss存放的文件夹 -->
+	<!-- oa引入的外部jar包文件 -->
+	<property name="outjar_liberary" value="D:/ezoffice11_lib"/>          <!-- 引入oa需要的外部的jar文件所在的目录（把所有需要的jar包都存放在该目录中） -->
+	
+	<property name="build.src" value="src" />
+	
+	<!-- Class文件输出路径 -->
+	<property name="build.dest" value="defaultroot/WEB-INF/classes" />
+	<property name="build.destroot" value="d:/${build.PatchName}/defaultroot" />
+	<property name="build.orient.root" value="defaultroot/" />
+	<property name="build.delete.dest" value="d:/${build.PatchName}" />
+	
+	
+	<!-- 判断文件夹是否存在 --> 
+	<condition property="xgwd_dir">
+		<and>
+			<available file="相关文档"  type="dir"/>   <!-- file="文件名称" filepath="/sss/ddd" 表示文件夹路径  【判断文件是否存在】 有type="dir"表示判断目录是否存在 -->
+		</and>
+	</condition>
+	
+	<condition property="sql_dir">
+			<and>
+				<available file="sql"  type="dir"/>
+			</and>
+	</condition>
+	
+	<!-- 调试标志 -->
+	<property name="debug" value="yes" />
+	
+	<!-- 拷贝输出-->
+	<property name="copysrc" value="copysrc" />
+	
+	<!--设定类路径 -->
+		<path id="outjar_lib">
+			<!-- 把lib路径以下的通过include指定的文件包含到classpath中 -->
+			<fileset dir="${outjar_liberary}">
+				<!-- 把所有jar文件包含到classpath中  -->
+				<include name="**/*.jar" />
+			</fileset>
+		</path>
+	
+	<path id="clspath">
+				<!-- 把lib路径以下的通过include指定的文件包含到classpath中 -->
+				<fileset dir="defaultroot/WEB-INF/lib">
+					<!-- 把所有jar文件包含到classpath中  -->
+					<include name="**/*.jar" />
+				</fileset>
+			</path>
+			
+	<!-- 设置jboss的lib -->
+		<path id="jboss_lib">
+					<fileset dir="${jboss.home}/server/all/lib">
+						<!-- 把所有jar文件包含到classpath中  -->
+						<include name="**/*.jar" />
+					</fileset>
+		</path>
+		
+		<!-- 实行编译 -->
+		<target name="compile" depends="clean,can_copy_xgwd,can_copy_sql">
+			<mkdir dir="${build.dest}" />
+			<mkdir dir="${build.delete.dest}/sql" />
+			<!-- 只能编译java文件，其他xml等的配置文件只能通过拷贝
+			<javac srcdir="${build.src}" debug="${debug}" destdir="${build.dest}"
+				 target="1.6" encoding="utf-8">
+				<classpath refid="clspath" />
+				<classpath refid="outjar_lib" />
+				<classpath refid="jboss_lib" />
+			</javac>
+			-->
+			
+			<!-- 列出来所有要拷贝的jsp和class文件 【修改此处】 -->
+			
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/evo/weixin/actionsupport" file="defaultroot/WEB-INF/classes/com/whir/evo/weixin/actionsupport/EarlyWaringInfoAction.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/evo/weixin/actionsupport" file="defaultroot/WEB-INF/classes/com/whir/evo/weixin/actionsupport/LeaderDutyAction.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/evo/weixin/actionsupport" file="defaultroot/WEB-INF/classes/com/whir/evo/weixin/actionsupport/WeatherForecastAction.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/service/parse" file="defaultroot/WEB-INF/classes/com/whir/service/parse/LeaderDutyParse.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/service/parse" file="defaultroot/WEB-INF/classes/com/whir/service/parse/WeatherForecastParse.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/service/parse" file="defaultroot/WEB-INF/classes/com/whir/service/parse/EarlyWaringInfoParse.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/ezoffice/watchmanager/actionsupport" file="defaultroot/WEB-INF/classes/com/whir/ezoffice/watchmanager/actionsupport/WatchshowAction.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/ezoffice/watchmanager/actionsupport" file="defaultroot/WEB-INF/classes/com/whir/ezoffice/watchmanager/actionsupport/WatchpostAction.class"/>
+																											
+			<!-- 压缩补丁包文件 -->
+			<zip 
+				destfile="D:/${build.PatchName}.zip" 
+				basedir="${build.delete.dest}"
+				includes = "**/*.*"/>
+			<!-- 删除临时文件夹 -->
+			<delete dir="${build.delete.dest}/"/>
+		</target>
+		
+	<!-- sql语句的文件，必须放在sql文件夹下【修改此处】 -->
+	    <target name="can_copy_sql" if="sql_dir">
+	    	<!--<copy todir="${build.delete.dest}/sql">
+	    		<fileset dir="sql">
+	    			<include name="SQL.txt"/>
+	    		</fileset>
+	    	</copy> -->
+	    </target>
+
+	<!-- 盖包说明和打包说明都必须放在"相关文档"文件夹下 【修改此处】 -->
+	    <target name="can_copy_xgwd" if="xgwd_dir">
+	    				<copy todir="${build.delete.dest}/" >
+	    					<fileset dir="相关文档">
+	    						<include name="盖包说明daiql20170518.doc"/>
+	    						<include name="打包说明daiql20170518.doc"/>
+	    					</fileset>
+	    				</copy>
+	    </target>
+	    
+	    	<!-- 清除文件 -->
+		<target name="clean">
+			<delete dir="${build.delete.dest}"/>
+		</target>
+	
+</project>

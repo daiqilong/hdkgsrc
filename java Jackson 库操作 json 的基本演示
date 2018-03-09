@@ -1,0 +1,352 @@
+核心库下载地址
+http://repo1.maven.org/maven2/com/fasterxml/jackson/core/
+jackson-annotations-2.2.2.jar
+jackson-core-2.2.2.jar
+jackson-databind-2.2.2.jar
+ 
+文件类型支持模块
+http://repo1.maven.org/maven2/com/fasterxml/jackson/dataformat/
+jackson-dataformat-xml-2.2.2.jar
+ 
+导入库
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonEncoding;
+import com.fasterxml.jackson.core.JsonParseException;
+ 
+[java] view plain copy
+/** 
+ * Map 转换为 json 
+ */  
+public static void MyTest01()  
+{  
+  Map<String, String> hashMap = new HashMap<String, String>();  
+  hashMap.put("name", "zhang");  
+  hashMap.put("sex", "1");  
+  hashMap.put("login", "Jack");  
+  hashMap.put("password", "123abc");  
+  
+  try  
+  {  
+    ObjectMapper objectMapper = new ObjectMapper();  
+    String userMapJson = objectMapper.writeValueAsString(hashMap);  
+  
+    JsonNode node = objectMapper.readTree(userMapJson);  
+  
+    // 输出结果转意，输出正确的信息  
+    System.out.println(node.get("password").asText());  
+    // 输出不转意,输出结果会包含""，这是不正确的，除非作为json传递，如果是输出结果值，必须如上一行的操作  
+    System.out.println(node.get("name"));  
+  }  
+  catch (IOException e)  
+  {  
+  }  
+}  
+ 
+[java] view plain copy
+/** 
+   * 解析 json 格式字符串 
+   */  
+  public static void MyTest03()  
+  {  
+    try  
+    {  
+      String str = "{\"data\":{\"birth_day\":7,\"birth_month\":6},\"errcode\":0,\"msg\":\"ok\",\"ret\":0}";  
+  
+      ObjectMapper mapper = new ObjectMapper();  
+      JsonNode root = mapper.readTree(str);  
+  
+      JsonNode data = root.path("data");  
+  
+      JsonNode birth_day = data.path("birth_day");  
+      System.out.println(birth_day.asInt());  
+        
+      JsonNode birth_month = data.path("birth_month");  
+      System.out.println(birth_month.asInt());  
+  
+      JsonNode msg = root.path("msg");  
+      System.out.println(msg.textValue());  
+    }  
+    catch (IOException e)  
+    {  
+    }  
+  }  
+ 
+[java] view plain copy
+/** 
+   * json 直接提取 值 
+   */  
+  public static void MyTest05()  
+  {  
+    try  
+    {  
+      // 演示字符串  
+      String str = "{\"data\":{\"hasnext\":0,\"info\":[{\"id\":\"288206077664983\",\"timestamp\":1371052476},{\"id\":\"186983078111768\",\"timestamp\":1370944068},{\"id\":\"297031120529307\",\"timestamp\":1370751789},{\"id\":\"273831022294863\",\"timestamp\":1369994812}],\"timestamp\":1374562897,\"totalnum\":422},\"errcode\":0,\"msg\":\"ok\",\"ret\":0,\"seqid\":5903702688915195270}";  
+  
+      ObjectMapper mapper = new ObjectMapper();  
+      JsonNode root = mapper.readTree(str);  
+  
+      // 提取 data  
+      JsonNode data = root.path("data");  
+      // 提取 info  
+      JsonNode info = data.path("info");  
+  
+      System.out.println(info.size());  
+  
+      // 得到 info 的第 0 个  
+      JsonNode item = info.get(0);  
+      System.out.println(item.get("id"));  
+      System.out.println(item.get("timestamp"));  
+  
+      // 得到 info 的第 2 个  
+      item = info.get(2);  
+      System.out.println(item.get("id"));  
+      System.out.println(item.get("timestamp"));  
+  
+      // 遍历 info 内的 array  
+      if (info.isArray())  
+      {  
+        for (JsonNode objNode : info)  
+        {  
+          System.out.println(objNode);  
+        }  
+      }  
+  
+    }  
+    catch (Exception e)  
+    {  
+  
+    }  
+  }  
+ 
+[java] view plain copy
+/** 
+ * 创建一个 json，并向该 json 添加内容 
+ */  
+public static void MyTest07()  
+{  
+  try  
+  {  
+    ObjectMapper mapper = new ObjectMapper();  
+    ObjectNode root1 = mapper.createObjectNode();  
+  
+    root1.put("nodekey1", 1);  
+    root1.put("nodekey2", 2);  
+  
+    System.out.println(root1.toString());  
+  
+  //Create the root node  
+    ObjectNode root = mapper.createObjectNode ();  
+    //Create a child node  
+    ObjectNode node1 = mapper.createObjectNode ();  
+    node1.put ("nodekey1", 1);  
+    node1.put ("nodekey2", 2);  
+    //Bind the child nodes  
+    root.put ("child", node1);  
+    //Array of nodes  
+    ArrayNode arrayNode = mapper.createArrayNode ();  
+    arrayNode.add (node1);  
+    arrayNode.add (1);  
+    //Bind array node  
+    root.put ("arraynode", arrayNode);  
+  
+    System.out.println (mapper.writeValueAsString (root));  
+    // 得到的输出信息  
+    // {"child":{"nodekey1":1,"nodekey2":2},"arraynode":[{"nodekey1":1,"nodekey2":2},1]}  
+  }  
+  catch (Exception e)  
+  {  
+  
+  }  
+}  
+
+[java] view plain copy
+// 创建一个 array node  
+public static void MyTest07()  
+{  
+  try  
+  {  
+    ObjectMapper mapper = new ObjectMapper();  
+    ArrayNode arrayNode = mapper.createArrayNode();  
+  
+    int i = 0;  
+    // 在 array 内创建 3 组 node 存入 array  
+    for (i = 0; i < 3; i++)  
+    {  
+      // 创建一个 node  
+      ObjectNode node = mapper.createObjectNode();  
+  
+      node.put("nodeA", i);  
+      node.put("nodeB", i);  
+      node.put("nodeC", i);  
+  
+      // 向 array 内添 node  
+      arrayNode.add(node);  
+    }  
+  
+    // 根  
+    ObjectNode root = mapper.createObjectNode();  
+    root.put("total", i);  
+    root.put("rows", arrayNode);  
+  
+    System.out.println(mapper.writeValueAsString(root));  
+    // 得到的输出信息  
+    // {"total":3,"rows":[{"nodeA":0,"nodeB":0,"nodeC":0},{"nodeA":1,"nodeB":1,"nodeC":1},{"nodeA":2,"nodeB":2,"nodeC":2}]}  
+  }  
+  catch (Exception e)  
+  {  
+    e.printStackTrace();  
+  }  
+}  
+在添加 array 节点时，put node 的方法已经过时，将使用 set 方法 添加 array 节点，举例：
+root.set ("rows", arrayNode);
+
+将 java object 转化为 json string，被转换的对象类似 YourObject 这样，利用 ObjectWrite 进行转换。
+[java] view plain copy
+public YourObject  
+{  
+  private str = "";  
+  public void setStr(String str)  
+  {  
+    this.str = str;  
+  }  
+  public String getStr()  
+  {  
+    return str;  
+  }  
+}  
+[java] view plain copy
+// 将 java 对象 转换为 json string  
+ObjectWriter objectWriter = new ObjectMapper().writer().withDefaultPrettyPrinter();  
+String json = null;  
+try  
+{  
+  json = objectWriter.writeValueAsString(yourObject);  
+}  
+catch (JsonProcessingException e)  
+{  
+  e.printStackTrace();  
+}  
+
+XML 转换为 JSON 也可以利用 Jackson 完成
+[java] view plain copy
+/** 
+ * 将 XML 转换为 JSON 
+ * @param args 
+ */  
+public void XML2JSON()  
+{  
+  String xml = "<default><column><title>Title 1</title><id>id1</id><value>val1</value></column>"  
+      + "<column><title>Title 2</title><id>id2</id><value>val2</value></column>"  
+      + "<column><title>Title 3</title><id>id3</id><value>val3</value></column></default>";  
+  try  
+  {  
+    XmlMapper xmlMapper = new XmlMapper();  
+    Map entries = xmlMapper.readValue(xml, Map.class);  
+    ObjectMapper jsonMapper = new ObjectMapper();  
+    String json = jsonMapper.writeValueAsString(entries);  
+    System.out.println(json);  
+  }  
+  catch (JsonParseException e)  
+  {  
+    e.printStackTrace();  
+  }  
+  catch (JsonMappingException e)  
+  {  
+    e.printStackTrace();  
+  }  
+  catch (JsonProcessingException e)  
+  {  
+    e.printStackTrace();  
+  }  
+  catch (IOException e)  
+  {  
+    e.printStackTrace();  
+  }  
+}  
+
+
+JsonNode 字符串类型：textValue 有效, asText 有效，toString 获取的结果带引号
+JsonNode 数值类型：textValue 获得的是 null， asText 有效, toString 有效，各输出方式比较如下，附代码：
+原始信息	toString()	asText()	textValue()	numberType()
+123	123	123	null	INT
+123.456	123.456	123.456	null	DOUBLE
+"123.45600"	"123.45600"	123.456	123.456	null
+""	""	 	 	null
+"0"	"0"	0	0	null
+"null"	"null"	null	null	null
+null	null	null	null	null
+
+[java] view plain copy
+package other;  
+  
+import com.fasterxml.jackson.databind.ObjectMapper;  
+import com.fasterxml.jackson.databind.JsonNode;  
+import com.fasterxml.jackson.databind.JsonMappingException;  
+import com.fasterxml.jackson.databind.node.ObjectNode;  
+import com.fasterxml.jackson.databind.node.ArrayNode;  
+import com.fasterxml.jackson.core.JsonGenerator;  
+  
+import java.io.IOException;  
+  
+import com.fasterxml.jackson.core.JsonEncoding;  
+import com.fasterxml.jackson.core.JsonParseException;  
+import com.fasterxml.jackson.core.JsonParser.NumberType;  
+import com.fasterxml.jackson.core.JsonProcessingException;  
+  
+public class Jackson1  
+{  
+  
+  public static void main(String[] args)  
+  {  
+    String str = "{\"data\":{\"number1\":123,\"number2\":123.45600,\"number3\":\"123.45600\""  
+        + ",\"number4\":\"\",\"number5\":\"0\",\"number6\":\"null\",\"number7\":null}}";  
+  
+    try  
+    {  
+      ObjectMapper mapper = new ObjectMapper();  
+      JsonNode root = mapper.readTree(str);  
+  
+      JsonNode data = root.path("data");  
+  
+      for (int i = 1; i <= 7; i++)  
+      {  
+        String strNodeName = "number" + String.valueOf(i);  
+  
+        if (data.has(strNodeName) == true)  
+        {  
+          System.out.println(String.format("原始节点信息 %s", data.get(strNodeName)));  
+  
+          String str1 = data.get(strNodeName).toString();  
+          System.out.println(String.format("toString() 输出: %s", str1));  
+  
+          String str2 = data.get(strNodeName).asText();  
+          System.out.println(String.format("asText() 输出: %s", str2));  
+  
+          String str3 = data.get(strNodeName).textValue();  
+          System.out.println(String.format("textValue() 输出: %s", str3));  
+  
+          NumberType str4 = data.get(strNodeName).numberType();  
+          System.out.println(String.format("numberType() 显示: %s", str4));  
+  
+          System.out.println("-----------------------------------------------");  
+        }  
+      }  
+    }  
+    catch (JsonProcessingException e)  
+    {  
+      e.printStackTrace();  
+    }  
+    catch (IOException e)  
+    {  
+      e.printStackTrace();  
+    }  
+  }  
+}  
+
+
+

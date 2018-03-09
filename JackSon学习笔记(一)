@@ -1,0 +1,575 @@
+概述
+
+Jackson框架是基于Java平台的一套数据处理工具，被称为“最好的Java Json解析器”。 
+Jackson框架包含了3个核心库：streaming,databind,annotations.Jackson还包含了其它数据处理类库，此外不作说明。
+Jackson版本： 1.x (目前版本从1.1~1.9)与2.x。1.x与2.x从包的命名上可以看出来，1.x的类库中，包命名以：org.codehaus.jackson.xxx开头，而2.x类库中包命令：com.fastxml.jackson.xxx开头
+Jackson Home Page：https://github.com/FasterXML/jackson
+Jackson Wiki：http://wiki.fasterxml.com/JacksonHome
+Jackson doc: https://github.com/FasterXML/jackson-docs
+Jackson Download Page：http://wiki.fasterxml.com/JacksonDownload
+
+准备工作
+
+本文所有程序都基于JDK1.7,依赖jackon的三个核心类库：
+jackson-core-2.5.3.jar
+jackson-annotations-2.5.3.jar
+jackson-databind-2.5.3.jar
+
+Jackson处理Json
+
+Jackson提供了三种可选的Json处理方法：流式API(Streaming API) 、树模型(Tree Model)、数据绑定(Data Binding)。从使用角度来看，比较一下这三种处理Json的方式的特性：
+Streaming API：是效率最高的处理方式(开销低、读写速度快，但程序编写复杂度高)
+Tree Model：是最灵活的处理方式
+Data Binding：是最常用的处理方式
+下面我们通过例子程序分别使用DataBinding,TreeModel,Streaming的方式来创建和解析Json字符串
+1.DataBinding处理Json
+
+Jackson支持Java对象与Json之间的相互转化。java对象序列化为json字符串，json字符串也可以反序列化为相同的java对象。
+
+(1)java对象转化成json:
+Province.java
+[java] view plain copy
+package com.jackson.json.databinding;  
+  
+public class Province {  
+    public String name;  
+    public int population;  
+    public String[] city;     
+}  
+Country.java
+[java] view plain copy
+package com.jackson.json.databinding;  
+  
+import java.util.ArrayList;  
+import java.util.Arrays;  
+import java.util.Date;  
+import java.util.HashMap;  
+import java.util.List;  
+import java.util.Map;  
+  
+public class Country {  
+    // 注意：被序列化的bean的private属性字段需要创建getter方法或者属性字段应该为public  
+    private String country_id;  
+    private Date birthDate;  
+    private List<String> nation = new ArrayList<String>();  
+    private String[] lakes;  
+    private List<Province> provinces = new ArrayList<Province>();  
+    private Map<String, Integer> traffic = new HashMap<String, Integer>();  
+  
+    public Country() {  
+        // TODO Auto-generated constructor stub  
+    }  
+  
+    public Country(String countryId) {  
+        this.country_id = countryId;  
+    }  
+  
+    public String getCountry_id() {  
+        return country_id;  
+    }  
+  
+    public void setCountry_id(String country_id) {  
+        this.country_id = country_id;  
+    }  
+  
+    public Date getBirthDate() {  
+        return birthDate;  
+    }  
+  
+    public void setBirthDate(Date birthDate) {  
+        this.birthDate = birthDate;  
+    }  
+  
+    public List<String> getNation() {  
+        return nation;  
+    }  
+  
+    public void setNation(List<String> nation) {  
+        this.nation = nation;  
+    }  
+  
+    public String[] getLakes() {  
+        return lakes;  
+    }  
+  
+    public void setLakes(String[] lakes) {  
+        this.lakes = lakes;  
+    }  
+  
+    public Integer get(String key) {  
+        return traffic.get(key);  
+    }  
+  
+    public Map<String, Integer> getTraffic() {  
+        return traffic;  
+    }  
+  
+    public void setTraffic(Map<String, Integer> traffic) {  
+        this.traffic = traffic;  
+    }  
+  
+    public void addTraffic(String key, Integer value) {  
+        traffic.put(key, value);  
+    }  
+  
+    public List<Province> getProvinces() {  
+        return provinces;  
+    }  
+  
+    public void setProvinces(List<Province> provinces) {  
+        this.provinces = provinces;  
+    }  
+  
+    @Override  
+    public String toString() {  
+        return "Country [country_id=" + country_id + ", birthDate=" + birthDate  
+                + ", nation=" + nation + ", lakes=" + Arrays.toString(lakes)  
+                + ", province=" + provinces + ", traffic=" + traffic + "]";  
+    }  
+  
+}  
+JavaBeanSerializeToJson.java
+[java] view plain copy
+package com.jackson.json.databinding;  
+  
+import java.io.File;  
+import java.text.SimpleDateFormat;  
+import java.util.ArrayList;  
+import java.util.List;  
+  
+import com.fasterxml.jackson.annotation.JsonInclude.Include;  
+import com.fasterxml.jackson.databind.ObjectMapper;  
+import com.fasterxml.jackson.databind.SerializationFeature;  
+  
+public class JavaBeanSerializeToJson {  
+  
+    public static void convert() throws Exception {  
+        // 使用ObjectMapper来转化对象为Json  
+        ObjectMapper mapper = new ObjectMapper();  
+        // 添加功能，让时间格式更具有可读性  
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");  
+        mapper.setDateFormat(dateFormat);  
+  
+        Country country = new Country("China");  
+        country.setBirthDate(dateFormat.parse("1949-10-01"));  
+        country.setLakes(new String[] { "Qinghai Lake", "Poyang Lake",  
+                "Dongting Lake", "Taihu Lake" });  
+  
+        List<String> nation = new ArrayList<String>();  
+        nation.add("Han");  
+        nation.add("Meng");  
+        nation.add("Hui");  
+        nation.add("WeiWuEr");  
+        nation.add("Zang");  
+        country.setNation(nation);  
+  
+        Province province = new Province();  
+        province.name = "Shanxi";  
+        province.population = 37751200;  
+        Province province2 = new Province();  
+        province2.name = "ZheJiang";  
+        province2.population = 55080000;  
+        List<Province> provinces = new ArrayList<Province>();  
+        provinces.add(province);  
+        provinces.add(province2);  
+        country.setProvinces(provinces);  
+          
+        country.addTraffic("Train(KM)", 112000);  
+        country.addTraffic("HighWay(KM)", 4240000);  
+        // 为了使JSON视觉上的可读性，增加一行如下代码，注意，在生产中不需要这样，因为这样会增大Json的内容  
+        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);  
+        // 配置mapper忽略空属性  
+        mapper.setSerializationInclusion(Include.NON_EMPTY);  
+        // 默认情况，Jackson使用Java属性字段名称作为 Json的属性名称,也可以使用Jackson annotations(注解)改变Json属性名称  
+        mapper.writeValue(new File("country.json"), country);  
+    }  
+  
+    public static void main(String[] args) throws Exception {  
+        convert();  
+    }  
+  
+}  
+程序运行后生成country.json，内容如下：
+[html] view plain copy
+{  
+  "country_id" : "China",  
+  "birthDate" : "1949-10-01",  
+  "nation" : [ "Han", "Meng", "Hui", "WeiWuEr", "Zang" ],  
+  "lakes" : [ "Qinghai Lake", "Poyang Lake", "Dongting Lake", "Taihu Lake" ],  
+  "provinces" : [ {  
+    "name" : "Shanxi",  
+    "population" : 37751200  
+  }, {  
+    "name" : "ZheJiang",  
+    "population" : 55080000  
+  } ],  
+  "traffic" : {  
+    "HighWay(KM)" : 4240000,  
+    "Train(KM)" : 112000  
+  }  
+}  
+
+(2)Json字符串反序列化为java对象：
+[java] view plain copy
+package com.jackson.json.databinding;  
+  
+import java.io.File;  
+import java.io.IOException;  
+import java.text.SimpleDateFormat;  
+import java.util.Iterator;  
+import java.util.List;  
+  
+import com.fasterxml.jackson.core.JsonParseException;  
+import com.fasterxml.jackson.databind.DeserializationFeature;  
+import com.fasterxml.jackson.databind.JsonMappingException;  
+import com.fasterxml.jackson.databind.ObjectMapper;  
+  
+/** 
+ * 将Json字符串反序列化为Java对象 
+ */  
+public class JsonDeserializeToJava {  
+      
+    public static void main(String[] args) throws Exception {  
+        //ObjectMapper类用序列化与反序列化映射器  
+        ObjectMapper mapper = new ObjectMapper();  
+        File json = new File("country.json");  
+        //当反序列化json时，未知属性会引起的反序列化被打断，这里我们禁用未知属性打断反序列化功能，  
+        //因为，例如json里有10个属性，而我们的bean中只定义了2个属性，其它8个属性将被忽略  
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);  
+          
+        //从json映射到java对象，得到country对象后就可以遍历查找,下面遍历部分内容，能说明问题就可以了  
+        Country country = mapper.readValue(json, Country.class);  
+        System.out.println("country_id:"+country.getCountry_id());  
+        //设置时间格式，便于阅读  
+        SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");  
+        String birthDate = dateformat.format(country.getBirthDate());  
+        System.out.println("birthDate:"+birthDate);  
+          
+        List<Province> provinces = country.getProvinces();  
+        for (Province province : provinces) {  
+            System.out.println("province:"+province.name + "\n" + "population:"+province.population);  
+        }  
+    }  
+}  
+程序运行结果：
+[html] view plain copy
+country_id:China  
+birthDate:1949-10-01  
+province:Shanxi  
+population:37751200  
+province:ZheJiang  
+population:55080000  
+
+2.Tree Model处理Json
+
+(1)tree model生成json:
+[java] view plain copy
+package com.jackson.json.treemodel;  
+  
+import java.io.File;  
+import java.io.FileWriter;  
+  
+import com.fasterxml.jackson.core.JsonFactory;  
+import com.fasterxml.jackson.core.JsonGenerator;  
+import com.fasterxml.jackson.databind.ObjectMapper;  
+import com.fasterxml.jackson.databind.SerializationFeature;  
+import com.fasterxml.jackson.databind.node.ArrayNode;  
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;  
+import com.fasterxml.jackson.databind.node.ObjectNode;  
+  
+public class SerializationExampleTreeModel {  
+      
+    public static void main(String[] args) throws Exception {  
+        //创建一个节点工厂,为我们提供所有节点  
+        JsonNodeFactory factory = new JsonNodeFactory(false);  
+        //创建一个json factory来写tree modle为json  
+        JsonFactory jsonFactory = new JsonFactory();  
+        //创建一个json生成器  
+        JsonGenerator generator = jsonFactory.createGenerator(new FileWriter(new File("country2.json")));  
+        //注意，默认情况下对象映射器不会指定根节点，下面设根节点为country  
+        ObjectMapper mapper = new ObjectMapper();  
+        ObjectNode country = factory.objectNode();  
+          
+        country.put("country_id", "China");  
+        country.put("birthDate", "1949-10-01");  
+          
+        //在Java中，List和Array转化为json后对应的格式符号都是"obj:[]"  
+        ArrayNode nation = factory.arrayNode();  
+        nation.add("Han").add("Meng").add("Hui").add("WeiWuEr").add("Zang");  
+        country.set("nation", nation);  
+          
+        ArrayNode lakes = factory.arrayNode();  
+        lakes.add("QingHai Lake").add("Poyang Lake").add("Dongting Lake").add("Taihu Lake");  
+        country.set("lakes", lakes);  
+          
+        ArrayNode provinces = factory.arrayNode();  
+        ObjectNode province = factory.objectNode();  
+        ObjectNode province2 = factory.objectNode();  
+        province.put("name","Shanxi");  
+        province.put("population", 37751200);  
+        province2.put("name","ZheJiang");  
+        province2.put("population", 55080000);  
+        provinces.add(province).add(province2);  
+        country.set("provinces", provinces);  
+          
+        ObjectNode traffic = factory.objectNode();  
+        traffic.put("HighWay(KM)", 4240000);  
+        traffic.put("Train(KM)", 112000);  
+        country.set("traffic", traffic);  
+          
+        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);  
+        mapper.writeTree(generator, country);  
+    }  
+  
+}  
+程序运行生成country2.json,内容如下：
+[html] view plain copy
+{"country_id":"China","birthDate":"1949-10-01","nation":["Han","Meng","Hui","WeiWuEr","Zang"],"lakes":["QingHai Lake","Poyang Lake","Dongting Lake","Taihu Lake"],"provinces":[{"name":"Shanxi","population":37751200},{"name":"ZheJiang","population":55080000}],"traffic":{"HighWay(KM)":4240000,"Train(KM)":112000}}  
+(2) json字符串反序列化为tree mode
+DeserializationExampleTreeModel1.java,请注意观察程序中不同的JsonNode的类型变化
+[java] view plain copy
+package com.jackson.json.treemodel;  
+  
+import java.io.File;  
+import java.util.Iterator;  
+  
+import com.fasterxml.jackson.databind.JsonNode;  
+import com.fasterxml.jackson.databind.ObjectMapper;  
+  
+public class DeserializationExampleTreeModel1 {  
+  
+    public static void main(String[] args) throws Exception {  
+        ObjectMapper mapper = new ObjectMapper();  
+        // Jackson提供一个树节点被称为"JsonNode",ObjectMapper提供方法来读json作为树的JsonNode根节点  
+        JsonNode node = mapper.readTree(new File("country2.json"));  
+        // 看看根节点的类型  
+        System.out.println("node JsonNodeType:"+node.getNodeType());  
+        // 是不是一个容器  
+        System.out.println("node is container Node ? "+node.isContainerNode());  
+        // 得到所有node节点的子节点名称  
+        System.out.println("---------得到所有node节点的子节点名称-------------------------");  
+        Iterator<String> fieldNames = node.fieldNames();  
+        while (fieldNames.hasNext()) {  
+            String fieldName = fieldNames.next();  
+            System.out.print(fieldName+" ");  
+        }  
+        System.out.println("\n-----------------------------------------------------");  
+        // as.Text的作用是有值返回值，无值返回空字符串  
+        JsonNode country_id = node.get("country_id");  
+        System.out.println("country_id:"+country_id.asText() + " JsonNodeType:"+country_id.getNodeType());  
+          
+        JsonNode birthDate = node.get("birthDate");  
+        System.out.println("birthDate:"+birthDate.asText()+" JsonNodeType:"+birthDate.getNodeType());  
+          
+        JsonNode nation = node.get("nation");  
+        System.out.println("nation:"+ nation+ " JsonNodeType:"+nation.getNodeType());  
+          
+        JsonNode lakes = node.get("lakes");  
+        System.out.println("lakes:"+lakes+" JsonNodeType:"+lakes.getNodeType());  
+  
+        JsonNode provinces = node.get("provinces");  
+        System.out.println("provinces JsonNodeType:"+provinces.getNodeType());  
+  
+        boolean flag = true;  
+        for (JsonNode provinceElements : provinces) {  
+            //为了避免provinceElements多次打印，用flag控制打印，能体现provinceElements的JsonNodeType就可以了  
+            if(flag){  
+                System.out.println("provinceElements JsonNodeType:"+provinceElements.getNodeType());  
+                System.out.println("provinceElements is container node? "+provinceElements.isContainerNode());  
+                flag = false;  
+            }  
+            Iterator<String> provinceElementFields = provinceElements.fieldNames();  
+            while (provinceElementFields.hasNext()) {  
+                String fieldName = (String) provinceElementFields.next();  
+                String province;  
+                if ("population".equals(fieldName)) {  
+                    province = fieldName + ":" + provinceElements.get(fieldName).asInt();  
+                }else{  
+                    province = fieldName + ":" + provinceElements.get(fieldName).asText();  
+                }  
+                System.out.println(province);  
+            }  
+        }  
+    }  
+}  
+程序运行后打印结果如下：
+[html] view plain copy
+node JsonNodeType:OBJECT  
+node is container Node ? true  
+---------得到所有node节点的子节点名称-------------------------  
+country_id birthDate nation lakes provinces traffic   
+-----------------------------------------------------  
+country_id:China JsonNodeType:STRING  
+birthDate:1949-10-01 JsonNodeType:STRING  
+nation:["Han","Meng","Hui","WeiWuEr","Zang"] JsonNodeType:ARRAY  
+lakes:["QingHai Lake","Poyang Lake","Dongting Lake","Taihu Lake"] JsonNodeType:ARRAY  
+provinces JsonNodeType:ARRAY  
+provinceElements JsonNodeType:OBJECT  
+provinceElements is container node? true  
+name:Shanxi  
+population:37751200  
+name:ZheJiang  
+population:55080000  
+
+在来看一下DeserializationExampleTreeModel2.java,本例中使用JsonNode.path的方法，path方法类似于DeserializationExampleTreeModel1.java中使用的get方法，
+但当node不存在时,get方法返回null,而path返回MISSING类型的JsonNode
+[java] view plain copy
+package com.jackson.json.treemodel;  
+  
+import java.io.File;  
+import java.io.IOException;  
+import java.util.Iterator;  
+  
+import com.fasterxml.jackson.core.JsonProcessingException;  
+import com.fasterxml.jackson.databind.JsonNode;  
+import com.fasterxml.jackson.databind.ObjectMapper;  
+  
+public class DeserializationExampleTreeModle2 {  
+      
+    public static void main(String[] args) throws JsonProcessingException, IOException{  
+        ObjectMapper mapper = new ObjectMapper();  
+        JsonNode node = mapper.readTree(new File("country2.json"));  
+        //path方法获取JsonNode时，当对象不存在时，返回MISSING类型的JsonNode  
+        JsonNode missingNode = node.path("test");  
+        if(missingNode.isMissingNode()){  
+            System.out.println("JsonNodeType : " + missingNode.getNodeType());  
+        }  
+  
+        System.out.println("country_id:"+node.path("country_id").asText());  
+          
+        JsonNode provinces = node.path("provinces");  
+        for (JsonNode provinceElements : provinces) {  
+            Iterator<String> provincesFields = provinceElements.fieldNames();  
+            while (provincesFields.hasNext()) {  
+                String fieldName = (String) provincesFields.next();  
+                String province;  
+                if("name".equals(fieldName)){  
+                    province = fieldName +":"+ provinceElements.path(fieldName).asText();  
+                }else{  
+                    province = fieldName +":"+ provinceElements.path(fieldName).asInt();  
+                }  
+                System.out.println(province);  
+            }  
+        }  
+    }  
+  
+}  
+程序运行打印结果：
+[html] view plain copy
+JsonNodeType : MISSING  
+country_id:China  
+name:Shanxi  
+population:37751200  
+name:ZheJiang  
+population:55080000  
+3.Stream处理Json
+
+(1)stream生成json
+[java] view plain copy
+package com.jackson.json.streaming;  
+  
+import java.io.File;  
+import java.io.FileWriter;  
+import java.io.Exception;  
+  
+import com.fasterxml.jackson.core.JsonFactory;  
+import com.fasterxml.jackson.core.JsonGenerator;  
+  
+public class StreamGeneratorJson {  
+      
+    public static void main(String[] args) throws Exception {  
+        JsonFactory factory = new JsonFactory();  
+        //从JsonFactory创建一个JsonGenerator生成器的实例  
+        JsonGenerator generator = factory.createGenerator(new FileWriter(new File("country3.json")));  
+          
+        generator.writeStartObject();  
+        generator.writeFieldName("country_id");  
+        generator.writeString("China");  
+        generator.writeFieldName("provinces");  
+        generator.writeStartArray();  
+        generator.writeStartObject();  
+        generator.writeStringField("name", "Shanxi");  
+        generator.writeNumberField("population", 33750000);  
+        generator.writeEndObject();  
+        generator.writeEndArray();  
+        generator.writeEndObject();  
+          
+        generator.close();  
+    }  
+  
+}  
+程序运行后生成country3.json文件内容：
+[html] view plain copy
+{"country_id":"China","provinces":[{"name":"Shanxi","population":33750000}]}  
+
+(2)stream解析json:
+现在adgcountry3.json，我们用Streaming API的方式来解析上面的Json,并查找json中population的值。
+[java] view plain copy
+package com.jackson.json.streaming;  
+  
+import java.io.File;  
+import java.io.IOException;  
+  
+import com.fasterxml.jackson.core.JsonFactory;  
+import com.fasterxml.jackson.core.JsonParseException;  
+import com.fasterxml.jackson.core.JsonParser;  
+import com.fasterxml.jackson.core.JsonToken;  
+  
+/*Jackson API提供了token对每个Json对象，例如，Json开始符号“{”是token指向的第一个解析的对象， 
+ key:value键值对是另一个单独的对象。这个API很强大，但也需要编写大量代码。不推荐使用，平时更多的是使用DataBinding和TreeModel来处理json 
+ */  
+public class StreamParserJson {  
+    public static void main(String[] args) throws JsonParseException,  
+            IOException {  
+        JsonFactory factory = new JsonFactory();  
+        // 从JsonFactory创建JsonParser解析器的实例  
+        JsonParser parser = factory.createParser(new File("country3.json"));  
+  
+        while (!parser.isClosed()) {  
+            // 得到一个token,第一次遍历时，token指向json文件中第一个符号"{"  
+            JsonToken token = parser.nextToken();  
+            if (token == null) {  
+                break;  
+            }  
+            // 我们只查找 country3.json中的"population"字段的值，能体现解析的流程就可以了  
+            // 当key是provinces时，我们进入provinces,查找population  
+            if (JsonToken.FIELD_NAME.equals(token)  
+                    && "provinces".equals(parser.getCurrentName())) {  
+                token = parser.nextToken();  
+                if (!JsonToken.START_ARRAY.equals(token)) {  
+                    break;  
+                }  
+                // 此时，token指向的应该是"{"  
+                token = parser.nextToken();  
+                if (!JsonToken.START_OBJECT.equals(token)) {  
+                    break;  
+                }  
+                while (true) {  
+                    token = parser.nextToken();  
+                    if (token == null) {  
+                        break;  
+                    }  
+                    if (JsonToken.FIELD_NAME.equals(token)  
+                            && "population".equals(parser.getCurrentName())) {  
+                        token = parser.nextToken();  
+                        System.out.println(parser.getCurrentName() + " : "  
+                                + parser.getIntValue());  
+                    }  
+                }  
+            }  
+        }  
+    }  
+  
+}  
+程序运行后，在控制台打印结果如下：
+[html] view plain copy
+population : 33750000  
+
+总结
+
+上面的例子中，分别用3种方式处理Json，我的体会大致如下：
+
+Stream API方式是开销最低、效率最高，但编写代码复杂度也最高，在生成Json时，需要逐步编写符号和字段拼接json,在解析Json时，需要根据token指向也查找json值，生成和解析json都不是很方便，代码可读性也很低。
+Databinding处理Json是最常用的json处理方式，生成json时，创建相关的java对象，并根据json内容结构把java对象组装起来，最后调用writeValue方法即可生成json,
+解析时，就更简单了，直接把json映射到相关的java对象，然后就可以遍历java对象来获取值了。
+TreeModel处理Json，是以树型结构来生成和解析json，生成json时，根据json内容结构，我们创建不同类型的节点对象，组装这些节点生成json。解析json时，它不需要绑定json到java bean，根据json结构，使用path或get方法轻松查找内容。

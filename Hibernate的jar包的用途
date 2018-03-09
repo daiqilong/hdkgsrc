@@ -1,0 +1,88 @@
+Hibernate的jar包的用途：
+
+net.sf.hibernate.* 
+该包的类基本上都是接口类和异常类
+
+net.sf.hibernate.cache.* 
+JCS的实现类
+
+net.sf.hibernate.cfg.* 
+配置文件读取类
+
+net.sf.hibernate.collection.* 
+Hibernate集合接口实现类，例如List，Set，Bag等等，Hibernate之所以要自行编写集合接口实现类是为了支持lazy loading
+
+net.sf.hibernate.connection.* 
+几个数据库连接池的Provider
+
+net.sf.hibernate.dialect.* 
+支持多种数据库特性，每个Dialect实现类代表一种数据库，描述了该数据库支持的数据类型和其它特点，例如是否有AutoIncrement，是否有Sequence，是否有分页sql等等
+
+net.sf.hibernate. eg.* 
+Hibernate文档中用到的例子
+
+net.sf.hibernate.engine.* 
+这个包的类作用比较散
+
+net.sf.hibernate.expression.* 
+HQL支持的表达式
+
+net.sf.hibernate.hq.* 
+HQL实现
+
+net.sf.hibernate. id.* 
+ID生成器
+
+net.sf.hibernate.impl.* 
+最核心的包，一些重要接口的实现类，如Session，SessionFactory，Query等
+
+net.sf.hibernate.jca.* 
+JCA支持，把Session包装为支持JCA的接口实现类
+
+net.sf.hibernate.jmx.* 
+JMX是用来编写App Server的管理程序的，大概是JMX部分接口的实，使得App Server可以通过JMX接口管理Hibernate
+
+net.sf.hibernate.loader.* 
+也是很核心的包，主要是生成sql语句的
+
+net.sf.hibernate.lob.* 
+Blob和Clob支持
+
+net.sf.hibernate.mapping.* 
+hbm文件的属性实现
+
+net.sf.hibernate.metadata.* 
+PO的Meta实现
+
+net.sf.hibernate.odmg.* 
+ODMG是一个ORM标准，这个包是ODMG标准的实现类
+
+net.sf.hibernate.persister.* 
+核心包，实现持久对象和表之间的映射
+
+net.sf.hibernate.proxy.* 
+Proxy和Lazy Loading支持
+
+net.sf.hibernate. ps.* 
+该包是PreparedStatment Cache
+
+net.sf.hibernate.sql.* 
+生成JDBC sql语句的包
+
+net.sf.hibernate.test.* 
+测试类，你可以用junit来测试Hibernate
+
+net.sf.hibernate.tool.hbm2ddl.* 
+用hbm配置文件生成DDL
+
+net.sf.hibernate.transaction.* 
+Hibernate Transaction实现类
+
+net.sf.hibernate.type.* 
+Hibernate中定义的持久对象的属性的数据类型
+
+net.sf.hibernate.util.* 
+一些工具类，作用比较散
+
+net.sf.hibernate.xml.* 
+XML数据绑定

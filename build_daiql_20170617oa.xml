@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- default是默认要执行的动作 -->
+<project name="phc" default="compile" basedir=".">
+	<property environment="env" />
+	<!-- 源代码文件路径 -->
+	<property name="build.PatchName" value="华东空管局_daiql_20170617oa" /> <!-- 要打的oa的补丁包,存放在D盘根目录下 【修改此处】 -->
+	<!-- jboss的安装路径 -->
+	<property name="jboss.home" value="D:/application/jboss-4.2.3.GA"/>   <!-- 如果要编译EJB文件，需要指定jboss存放的文件夹 -->
+	<!-- oa引入的外部jar包文件 -->
+	<property name="outjar_liberary" value="D:/ezoffice11_lib"/>          <!-- 引入oa需要的外部的jar文件所在的目录（把所有需要的jar包都存放在该目录中） -->
+	
+	<property name="build.src" value="src" />
+	
+	<!-- Class文件输出路径 -->
+	<property name="build.dest" value="defaultroot/WEB-INF/classes" />
+	<property name="build.destroot" value="d:/${build.PatchName}/defaultroot" />
+	<property name="build.orient.root" value="defaultroot/" />
+	<property name="build.delete.dest" value="d:/${build.PatchName}" />
+	
+	
+	<!-- 判断文件夹是否存在 --> 
+	<condition property="xgwd_dir">
+		<and>
+			<available file="相关文档"  type="dir"/>   <!-- file="文件名称" filepath="/sss/ddd" 表示文件夹路径  【判断文件是否存在】 有type="dir"表示判断目录是否存在 -->
+		</and>
+	</condition>
+	
+	<condition property="sql_dir">
+			<and>
+				<available file="sql"  type="dir"/>
+			</and>
+	</condition>
+	
+	<!-- 调试标志 -->
+	<property name="debug" value="yes" />
+	
+	<!-- 拷贝输出-->
+	<property name="copysrc" value="copysrc" />
+	
+	<!--设定类路径 -->
+		<path id="outjar_lib">
+			<!-- 把lib路径以下的通过include指定的文件包含到classpath中 -->
+			<fileset dir="${outjar_liberary}">
+				<!-- 把所有jar文件包含到classpath中  -->
+				<include name="**/*.jar" />
+			</fileset>
+		</path>
+	
+	<path id="clspath">
+				<!-- 把lib路径以下的通过include指定的文件包含到classpath中 -->
+				<fileset dir="defaultroot/WEB-INF/lib">
+					<!-- 把所有jar文件包含到classpath中  -->
+					<include name="**/*.jar" />
+				</fileset>
+			</path>
+			
+	<!-- 设置jboss的lib -->
+		<path id="jboss_lib">
+					<fileset dir="${jboss.home}/server/all/lib">
+						<!-- 把所有jar文件包含到classpath中  -->
+						<include name="**/*.jar" />
+					</fileset>
+		</path>
+		
+		<!-- 实行编译 -->
+		<target name="compile" depends="clean,can_copy_xgwd,can_copy_sql">
+			<mkdir dir="${build.dest}" />
+			<mkdir dir="${build.delete.dest}/sql" />
+			<!-- 只能编译java文件，其他xml等的配置文件只能通过拷贝
+			<javac srcdir="${build.src}" debug="${debug}" destdir="${build.dest}"
+				 target="1.6" encoding="utf-8">
+				<classpath refid="clspath" />
+				<classpath refid="outjar_lib" />
+				<classpath refid="jboss_lib" />
+			</javac>
+			-->
+			
+			<!-- 列出来所有要拷贝的jsp和class文件 【修改此处】 -->
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/common/util/parse" file="defaultroot/WEB-INF/classes/com/whir/common/util/parse/IDataParse.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/common/util" file="defaultroot/WEB-INF/classes/com/whir/common/util/SecurityFlightJsonBean.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/common/util" file="defaultroot/WEB-INF/classes/com/whir/common/util/TowerSecurityFlightJsonBean.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/common/util" file="defaultroot/WEB-INF/classes/com/whir/common/util/WeatherJsonBean.class"/>				
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/common/util/parse" file="defaultroot/WEB-INF/classes/com/whir/common/util/parse/XmlDataParse.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/component/util" file="defaultroot/WEB-INF/classes/com/whir/component/util/DataConvert.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/component/util" file="defaultroot/WEB-INF/classes/com/whir/component/util/JacksonUtil.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/component/util" file="defaultroot/WEB-INF/classes/com/whir/component/util/PropertiesUtils.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/component/util" file="defaultroot/WEB-INF/classes/com/whir/component/util/TempDirectoryProcessor.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/ezflow/actionsupport" file="defaultroot/WEB-INF/classes/com/whir/ezflow/actionsupport/EzFlowExportToExcelAction.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/ezflow/actionsupport" file="defaultroot/WEB-INF/classes/com/whir/ezflow/actionsupport/EzFlowExtraHandleAction.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/ezflow/basedata/bd" file="defaultroot/WEB-INF/classes/com/whir/ezflow/basedata/bd/EzflowRecordImportBD.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/ezoffice/customize/customercontent/actionsupport" file="defaultroot/WEB-INF/classes/com/whir/ezoffice/customize/customercontent/actionsupport/CustormerContentAction.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/ezoffice/ezform/bd" file="defaultroot/WEB-INF/classes/com/whir/ezoffice/ezform/bd/FormDataBD.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/ezoffice/ezform/bd" file="defaultroot/WEB-INF/classes/com/whir/ezoffice/ezform/bd/SetFieldBD.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/ezoffice/ezform/ui" file="defaultroot/WEB-INF/classes/com/whir/ezoffice/ezform/ui/ParserHtml.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/ezoffice/information/infomanager/actionsupport" file="defaultroot/WEB-INF/classes/com/whir/ezoffice/information/infomanager/actionsupport/InfoListAction.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/ezoffice/information/infomanager/actionsupport" file="defaultroot/WEB-INF/classes/com/whir/ezoffice/information/infomanager/actionsupport/InfoListAction.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/ezoffice/logon/actionsupport" file="defaultroot/WEB-INF/classes/com/whir/ezoffice/logon/actionsupport/LogonAction.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/ezoffice/personalwork/setup/actionsupport" file="defaultroot/WEB-INF/classes/com/whir/ezoffice/personalwork/setup/actionsupport/StatusAction.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/ezoffice/watchmanager/actionsupport" file="defaultroot/WEB-INF/classes/com/whir/ezoffice/watchmanager/actionsupport/WatcharrangeAction.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/ezoffice/watchmanager/actionsupport" file="defaultroot/WEB-INF/classes/com/whir/ezoffice/watchmanager/actionsupport/WatchempdeployAction.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/ezoffice/watchmanager/actionsupport" file="defaultroot/WEB-INF/classes/com/whir/ezoffice/watchmanager/actionsupport/WatchpostAction.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/ezoffice/watchmanager/actionsupport" file="defaultroot/WEB-INF/classes/com/whir/ezoffice/watchmanager/actionsupport/WatchshowAction.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/plugins/job" file="defaultroot/WEB-INF/classes/com/whir/plugins/job/CdmServerData.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/portal/backlog/actionsupport" file="defaultroot/WEB-INF/classes/com/whir/portal/backlog/actionsupport/OaSystemAction.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/portal/backlog/actionsupport" file="defaultroot/WEB-INF/classes/com/whir/portal/backlog/actionsupport/OnlineReimburseAction.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/portal/backlog/actionsupport" file="defaultroot/WEB-INF/classes/com/whir/portal/backlog/actionsupport/OperationSystemAction.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/portal/backlog/actionsupport" file="defaultroot/WEB-INF/classes/com/whir/portal/backlog/actionsupport/RefreshPageAction.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/portal/backlog/actionsupport" file="defaultroot/WEB-INF/classes/com/whir/portal/backlog/actionsupport/SecureManageAction.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/portal/backlog/actionsupport" file="defaultroot/WEB-INF/classes/com/whir/portal/backlog/actionsupport/TrainManageAction.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/portal/basedata/bd" file="defaultroot/WEB-INF/classes/com/whir/portal/basedata/bd/BackLogBD.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/portal/basedata/bd" file="defaultroot/WEB-INF/classes/com/whir/portal/basedata/bd/CdmServerBD.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/portal/basedata/bd" file="defaultroot/WEB-INF/classes/com/whir/portal/basedata/bd/ConferenceNoticeBD.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/portal/basedata/bd" file="defaultroot/WEB-INF/classes/com/whir/portal/basedata/bd/MyScheduleBD.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/portal/basedata/bd" file="defaultroot/WEB-INF/classes/com/whir/portal/basedata/bd/NoticeAnnouncementBD.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/portal/basedata/bd" file="defaultroot/WEB-INF/classes/com/whir/portal/basedata/bd/RunConditionBD.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/portal/basedata/bd" file="defaultroot/WEB-INF/classes/com/whir/portal/basedata/bd/TrainingTrendBD.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/portal/basedata/bd" file="defaultroot/WEB-INF/classes/com/whir/portal/basedata/bd/WainingInformationBD.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/portal/basedata/bd" file="defaultroot/WEB-INF/classes/com/whir/portal/basedata/bd/WatchInfosOnHomePage.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/portal/basedata/bd" file="defaultroot/WEB-INF/classes/com/whir/portal/basedata/bd/WeatherForecastBD.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/portal/module/actionsupport" file="defaultroot/WEB-INF/classes/com/whir/portal/module/actionsupport/ActCenterStatisticalAction.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/portal/module/actionsupport" file="defaultroot/WEB-INF/classes/com/whir/portal/module/actionsupport/CDMMoudleAction.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/portal/module/actionsupport" file="defaultroot/WEB-INF/classes/com/whir/portal/module/actionsupport/GeneralGuideAction.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/portal/module/actionsupport" file="defaultroot/WEB-INF/classes/com/whir/portal/module/actionsupport/InformationMenuAction.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/portal/module/actionsupport" file="defaultroot/WEB-INF/classes/com/whir/portal/module/actionsupport/OMSSMoudleAction.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/portal/module/actionsupport" file="defaultroot/WEB-INF/classes/com/whir/portal/module/actionsupport/RadarWeatherAction.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/portal/module/actionsupport" file="defaultroot/WEB-INF/classes/com/whir/portal/module/actionsupport/RunConditionAction.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/portal/module/actionsupport" file="defaultroot/WEB-INF/classes/com/whir/portal/module/actionsupport/SecureManageAction.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/portal/module/actionsupport" file="defaultroot/WEB-INF/classes/com/whir/portal/module/actionsupport/StatisticsMapAction.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/portal/module/actionsupport" file="defaultroot/WEB-INF/classes/com/whir/portal/module/actionsupport/StrategyStatisticalAction.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/portal/module/actionsupport" file="defaultroot/WEB-INF/classes/com/whir/portal/module/actionsupport/WainingInformationAction.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/portal/service" file="defaultroot/WEB-INF/classes/com/whir/portal/service/Base64Helper.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/portal/servlet" file="defaultroot/WEB-INF/classes/com/whir/portal/servlet/ServerPortListener.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/portal/util" file="defaultroot/WEB-INF/classes/com/whir/portal/util/MD5.class"/>
+			<copy todir="${build.destroot}" file="defaultroot/kygd.properties"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/rd/util" file="defaultroot/WEB-INF/classes/com/whir/rd/util/WatchArrangeUtils.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/service/parse" file="defaultroot/WEB-INF/classes/com/whir/service/parse/OMSSSystemParse.class"/>
+			<copy todir="${build.destroot}/WEB-INF/classes/com/whir/service/parse" file="defaultroot/WEB-INF/classes/com/whir/service/parse/SystemRefreshParse.class"/>
+			
+			<copy todir="${build.destroot}" file="defaultroot/desktop.jsp"/>
+			<copy todir="${build.destroot}" file="defaultroot/jumpSys.jsp"/>
+			<copy todir="${build.destroot}" file="defaultroot/kg-daiban.jsp"/>
+			<copy todir="${build.destroot}" file="defaultroot/kg-dryx.jsp"/>
+			<copy todir="${build.destroot}" file="defaultroot/kg-fliflowframe.jsp"/>
+			<copy todir="${build.destroot}" file="defaultroot/kg-gonggao.jsp"/>
+			<copy todir="${build.destroot}" file="defaultroot/kg-leida.jsp"/>
+			<copy todir="${build.destroot}" file="defaultroot/kg-rili.jsp"/>
+			<copy todir="${build.destroot}" file="defaultroot/kg-system.jsp"/>
+			<copy todir="${build.destroot}" file="defaultroot/kg-tgframe.jsp"/>
+			<copy todir="${build.destroot}" file="defaultroot/kg-weather.jsp"/>
+			<copy todir="${build.destroot}" file="defaultroot/kg-weatherframe.jsp"/>
+			<copy todir="${build.destroot}" file="defaultroot/kg-work.jsp"/>
+			<copy todir="${build.destroot}" file="defaultroot/kg-zhanlue.jsp"/>
+			<copy todir="${build.destroot}" file="defaultroot/kg-zhidu.jsp"/>
+			
+			<copy todir="${build.destroot}/homepage" file="defaultroot/homepage/kg-fliflowframe.jsp"/>	
+			<copy todir="${build.destroot}/homepage" file="defaultroot/homepage/kg-tgframe.jsp"/>	
+			<copy todir="${build.destroot}/homepage" file="defaultroot/homepage/kg-weather.jsp"/>	
+			<copy todir="${build.destroot}/homepage" file="defaultroot/homepage/kg-work.jsp"/>
+			<copy todir="${build.destroot}/homepage" file="defaultroot/homepage/kg-zhanlue.jsp"/>
+			<copy todir="${build.destroot}/homepage" file="defaultroot/homepage/kg-zhidu.jsp"/>
+			<copy todir="${build.destroot}/homepage" file="defaultroot/homepage/js/kg-daiban.js"/>
+			<copy todir="${build.destroot}/homepage" file="defaultroot/homepage/js/kg-dryx.js"/>
+			<copy todir="${build.destroot}/homepage" file="defaultroot/homepage/js/kg-fliflowframe.js"/>
+			<copy todir="${build.destroot}/homepage" file="defaultroot/homepage/js/kg-gonggao.js"/>
+			<copy todir="${build.destroot}/homepage" file="defaultroot/homepage/js/kg-system.js"/>
+			<copy todir="${build.destroot}/homepage" file="defaultroot/homepage/js/kg-tgframe.js"/>
+			
+			<copy todir="${build.destroot}/homepage/dryx" file="defaultroot/homepage/dryx/kg-control.jsp"/>
+			<copy todir="${build.destroot}/homepage/dryx" file="defaultroot/homepage/dryx/kg-distract.jsp"/>
+			<copy todir="${build.destroot}/homepage/dryx" file="defaultroot/homepage/dryx/kg-halt.jsp"/>
+			<copy todir="${build.destroot}/homepage/dryx" file="defaultroot/homepage/dryx/kg-track.jsp"/>
+			<copy todir="${build.destroot}/homepage/dryx" file="defaultroot/homepage/dryx/kg-weather.jsp"/>
+			
+			<copy todir="${build.destroot}/tzgg" file="defaultroot/tzgg/anguanList.jsp"/>
+			<copy todir="${build.destroot}/tzgg" file="defaultroot/tzgg/kg-trainingframe.jsp"/>
+			<copy todir="${build.destroot}/tzgg" file="defaultroot/tzgg/mhList.jsp"/>
+			<copy todir="${build.destroot}/tzgg" file="defaultroot/tzgg/oaList.jsp"/>
+			<copy todir="${build.destroot}/tzgg" file="defaultroot/tzgg/peixunList.jsp"/>
+			<copy todir="${build.destroot}/tzgg" file="defaultroot/tzgg/xhggList.jsp"/>
+			<copy todir="${build.destroot}/tzgg" file="defaultroot/tzgg/yunweiList.jsp"/>
+			
+			<copy todir="${build.destroot}/modules/cdm" file="defaultroot/modules/cdm/flightInforQuery.jsp"/>
+			
+			<copy todir="${build.destroot}/modules/generalguide" file="defaultroot/modules/generalguide/distractStatisticsList.jsp"/>
+			<copy todir="${build.destroot}/modules/generalguide" file="defaultroot/modules/generalguide/faultStatisticsList.jsp"/>
+			<copy todir="${build.destroot}/modules/generalguide" file="defaultroot/modules/generalguide/frequencyInformationList.jsp"/>
+			<copy todir="${build.destroot}/modules/generalguide" file="defaultroot/modules/generalguide/haltStatisticsList.jsp"/>
+			<copy todir="${build.destroot}/modules/generalguide" file="defaultroot/modules/generalguide/repairsInformationList.jsp"/>
+			<copy todir="${build.destroot}/modules/generalguide" file="defaultroot/modules/generalguide/systemList.jsp"/>
+			
+			<copy todir="${build.destroot}/modules/omss" file="defaultroot/modules/omss/everyRunSituationFour.jsp"/>
+			<copy todir="${build.destroot}/modules/omss" file="defaultroot/modules/omss/everyRunSituationFourPage.jsp"/>
+			<copy todir="${build.destroot}/modules/omss" file="defaultroot/modules/omss/everyRunSituationOne.jsp"/>
+			<copy todir="${build.destroot}/modules/omss" file="defaultroot/modules/omss/everyRunSituationOnePage.jsp"/>
+			<copy todir="${build.destroot}/modules/omss" file="defaultroot/modules/omss/everyRunSituationThree.jsp"/>
+			<copy todir="${build.destroot}/modules/omss" file="defaultroot/modules/omss/everyRunSituationThreePage.jsp"/>
+			<copy todir="${build.destroot}/modules/omss" file="defaultroot/modules/omss/everyRunSituationTwo.jsp"/>
+			<copy todir="${build.destroot}/modules/omss" file="defaultroot/modules/omss/everyRunSituationTwoPage.jsp"/>
+			<copy todir="${build.destroot}/modules/omss" file="defaultroot/modules/omss/realTimeFlow.jsp"/>
+			<copy todir="${build.destroot}/modules/omss" file="defaultroot/modules/omss/videoMeetingOne.jsp"/>
+			<copy todir="${build.destroot}/modules/omss" file="defaultroot/modules/omss/videoMeetingOnePage.jsp"/>
+			<copy todir="${build.destroot}/modules/omss" file="defaultroot/modules/omss/videoMeetingThree.jsp"/>
+			<copy todir="${build.destroot}/modules/omss" file="defaultroot/modules/omss/videoMeetingThreePage.jsp"/>
+			<copy todir="${build.destroot}/modules/omss" file="defaultroot/modules/omss/videoMeetingTwo.jsp"/>
+			<copy todir="${build.destroot}/modules/omss" file="defaultroot/modules/omss/videoMeetingTwoPage.jsp"/>
+			
+			<copy todir="${build.destroot}/modules/seconddevelop/js" file="defaultroot/modules/seconddevelop/js/checkForm.js"/>
+			<copy todir="${build.destroot}/modules/seconddevelop" file="defaultroot/modules/seconddevelop/changeRadioToNum.jsp"/>
+			<copy todir="${build.destroot}/modules/seconddevelop" file="defaultroot/modules/seconddevelop/checkForm.jsp"/>
+			
+			<copy todir="${build.destroot}/modules/securemanage" file="defaultroot/modules/securemanage/riskManageList.jsp"/>
+			<copy todir="${build.destroot}/modules/securemanage" file="defaultroot/modules/securemanage/riskReportList.jsp"/>
+			<copy todir="${build.destroot}/modules/securemanage" file="defaultroot/modules/securemanage/secureAssessList.jsp"/>
+			<copy todir="${build.destroot}/modules/securemanage" file="defaultroot/modules/securemanage/secureExamineList.jsp"/>
+			<copy todir="${build.destroot}/modules/securemanage" file="defaultroot/modules/securemanage/secureInformationList.jsp"/>
+			
+			<copy todir="${build.destroot}/modules/strategy" file="defaultroot/modules/strategy/aviationInforContent.jsp"/>
+			<copy todir="${build.destroot}/modules/strategy" file="defaultroot/modules/strategy/aviationInforStatistical.jsp"/>
+			<copy todir="${build.destroot}/modules/strategy" file="defaultroot/modules/strategy/flightReportContent.jsp"/>
+			<copy todir="${build.destroot}/modules/strategy" file="defaultroot/modules/strategy/flightReportStatistical.jsp"/>
+			
+			<copy todir="${build.destroot}/modules/tj" file="defaultroot/modules/tj/disturbPage.jsp"/>
+			<copy todir="${build.destroot}/modules/tj" file="defaultroot/modules/tj/faultPage.jsp"/>
+			<copy todir="${build.destroot}/modules/tj" file="defaultroot/modules/tj/haltPage.jsp"/>
+			
+			<copy todir="${build.destroot}/platform/bpm/ezflow/operation" file="defaultroot/platform/bpm/ezflow/operation/delectSecurityFlight.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/ezflow/operation" file="defaultroot/platform/bpm/ezflow/operation/delectTowerSecurityFlight.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/ezflow/operation" file="defaultroot/platform/bpm/ezflow/operation/delectWeatherWork.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/ezflow/operation" file="defaultroot/platform/bpm/ezflow/operation/ezflow_add.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/ezflow/operation" file="defaultroot/platform/bpm/ezflow/operation/ezflow_chooseActivity.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/ezflow/operation" file="defaultroot/platform/bpm/ezflow/operation/ezflow_include_comment.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/ezflow/operation" file="defaultroot/platform/bpm/ezflow/operation/ezflow_modify.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/ezflow/operation" file="defaultroot/platform/bpm/ezflow/operation/ezflow_setUser.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/ezflow/operation" file="defaultroot/platform/bpm/ezflow/operation/getSecurityFlight.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/ezflow/operation" file="defaultroot/platform/bpm/ezflow/operation/getTowerSecurityFlight.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/ezflow/operation" file="defaultroot/platform/bpm/ezflow/operation/getWeatherWork.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/ezflow/operation" file="defaultroot/platform/bpm/ezflow/operation/securityFlight_import_save.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/ezflow/operation" file="defaultroot/platform/bpm/ezflow/operation/towerSecFlight_import_save.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/ezflow/operation" file="defaultroot/platform/bpm/ezflow/operation/weather_import_save.jsp"/>
+			
+			<copy todir="${build.destroot}/platform/bpm/ezflow" file="defaultroot/platform/bpm/ezflow/process/ezflow_process_set.js"/>
+			<copy todir="${build.destroot}/platform/bpm/ezflow/process" file="defaultroot/platform/bpm/ezflow/process/ezflow_process_set.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/ezflow/process" file="defaultroot/platform/bpm/ezflow/process/ezflow_process_setcallactivity.jsp"/>
+			
+			<copy todir="${build.destroot}/platform/bpm/watchmanager/postEmpSet" file="defaultroot/platform/bpm/watchmanager/postEmpSet/emp_form.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/watchmanager/postEmpSet" file="defaultroot/platform/bpm/watchmanager/postEmpSet/empAdd.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/watchmanager/postEmpSet" file="defaultroot/platform/bpm/watchmanager/postEmpSet/empList.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/watchmanager/postEmpSet" file="defaultroot/platform/bpm/watchmanager/postEmpSet/empModify.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/watchmanager/postEmpSet" file="defaultroot/platform/bpm/watchmanager/postEmpSet/LeaderEmp_form.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/watchmanager/postEmpSet" file="defaultroot/platform/bpm/watchmanager/postEmpSet/leaderEmpAdd.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/watchmanager/postEmpSet" file="defaultroot/platform/bpm/watchmanager/postEmpSet/leaderEmpList.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/watchmanager/postEmpSet" file="defaultroot/platform/bpm/watchmanager/postEmpSet/leaderEmpModify.jsp"/>
+			
+			<copy todir="${build.destroot}/platform/bpm/watchmanager/postSet" file="defaultroot/platform/bpm/watchmanager/postSet/bigLeaderPostAdd.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/watchmanager/postSet" file="defaultroot/platform/bpm/watchmanager/postSet/bigLeaderPostList.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/watchmanager/postSet" file="defaultroot/platform/bpm/watchmanager/postSet/bigLeaderPostModify.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/watchmanager/postSet" file="defaultroot/platform/bpm/watchmanager/postSet/leader_form.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/watchmanager/postSet" file="defaultroot/platform/bpm/watchmanager/postSet/LeaderPostAdd.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/watchmanager/postSet" file="defaultroot/platform/bpm/watchmanager/postSet/leaderPostList.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/watchmanager/postSet" file="defaultroot/platform/bpm/watchmanager/postSet/leaderPostModify.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/watchmanager/postSet" file="defaultroot/platform/bpm/watchmanager/postSet/p_form.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/watchmanager/postSet" file="defaultroot/platform/bpm/watchmanager/postSet/postAdd.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/watchmanager/postSet" file="defaultroot/platform/bpm/watchmanager/postSet/postList.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/watchmanager/postSet" file="defaultroot/platform/bpm/watchmanager/postSet/postModify.jsp"/>
+			
+			<copy todir="${build.destroot}/platform/bpm/watchmanager/watchArrange" file="defaultroot/platform/bpm/watchmanager/watchArrange/bigleaderwatcharrange.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/watchmanager/watchArrange" file="defaultroot/platform/bpm/watchmanager/watchArrange/leaderWatch_form.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/watchmanager/watchArrange" file="defaultroot/platform/bpm/watchmanager/watchArrange/leaderWatchArrange.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/watchmanager/watchArrange" file="defaultroot/platform/bpm/watchmanager/watchArrange/leaderWatchModify.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/watchmanager/watchArrange" file="defaultroot/platform/bpm/watchmanager/watchArrange/watch_form.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/watchmanager/watchArrange" file="defaultroot/platform/bpm/watchmanager/watchArrange/watchArrange.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/watchmanager/watchArrange" file="defaultroot/platform/bpm/watchmanager/watchArrange/watchModify.jsp"/>
+			
+			<copy todir="${build.destroot}/platform/bpm/watchmanager/watchShow" file="defaultroot/platform/bpm/watchmanager/watchShow/centerLeaderShow.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/watchmanager/watchShow" file="defaultroot/platform/bpm/watchmanager/watchShow/leaderShow.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/watchmanager/watchShow" file="defaultroot/platform/bpm/watchmanager/watchShow/postShow.jsp"/>
+			<copy todir="${build.destroot}/platform/bpm/watchmanager/watchShow" file="defaultroot/platform/bpm/watchmanager/watchShow/ywPostShow.jsp"/>
+			
+			<copy todir="${build.destroot}/platform/custom/customize/employee_service" file="defaultroot/platform/custom/customize/employee_service/associationManageList.jsp"/>
+			<copy todir="${build.destroot}/platform/custom/customize/employee_service" file="defaultroot/platform/custom/customize/employee_service/personalInforList.jsp"/>
+			<copy todir="${build.destroot}/platform/custom/customize/employee_service" file="defaultroot/platform/custom/customize/employee_service/salaryQueryList.jsp"/>
+			<copy todir="${build.destroot}/platform/custom/customize/employee_service" file="defaultroot/platform/custom/customize/employee_service/salaryQueryListPage.jsp"/>
+			<copy todir="${build.destroot}/platform/custom/customize/employee_service" file="defaultroot/platform/custom/customize/employee_service/trainYearPlanList.jsp"/>
+			
+			<copy todir="${build.destroot}/platform/custom/ezform/ext" file="defaultroot/platform/custom/ezform/ext/initLoadPage.jsp"/>
+			<copy todir="${build.destroot}/platform/custom/ezform/js" file="defaultroot/platform/custom/ezform/js/common.js"/>
+			<copy todir="${build.destroot}/platform/custom/ezform/js" file="defaultroot/platform/custom/ezform/js/ezform.js"/>
+			<copy todir="${build.destroot}/platform/custom/ezform/js" file="defaultroot/platform/custom/ezform/js/popselectdata.js"/>
+			
+			<copy todir="${build.destroot}/WEB-INF/struts2" file="defaultroot/WEB-INF/struts2/struts-backlog.xml"/>
+			<copy todir="${build.destroot}/WEB-INF/struts2" file="defaultroot/WEB-INF/struts2/struts-custcenter.xml"/>
+			<copy todir="${build.destroot}/WEB-INF/struts2" file="defaultroot/WEB-INF/struts2/struts-custom.xml"/>
+			<copy todir="${build.destroot}/WEB-INF/struts2" file="defaultroot/WEB-INF/struts2/struts-custormer.xml"/>
+			<copy todir="${build.destroot}/WEB-INF/struts2" file="defaultroot/WEB-INF/struts2/struts-extrahandle.xml"/>
+			<copy todir="${build.destroot}/WEB-INF/struts2" file="defaultroot/WEB-INF/struts2/struts-ezflow.xml"/>
+			<copy todir="${build.destroot}/WEB-INF/struts2" file="defaultroot/WEB-INF/struts2/struts-personal.xml"/>
+			<copy todir="${build.destroot}/WEB-INF/struts2" file="defaultroot/WEB-INF/struts2/struts-watchmanager.xml"/>
+
+			<copy todir="${build.destroot}/WEB-INF" file="defaultroot/WEB-INF/ftppath.properties"/>
+			<copy todir="${build.destroot}/WEB-INF" file="defaultroot/WEB-INF/quartz_job.xml"/>
+			<copy todir="${build.destroot}/WEB-INF" file="defaultroot/WEB-INF/refresh.properties"/>
+			<copy todir="${build.destroot}/WEB-INF" file="defaultroot/WEB-INF/ServiceParse.xml"/>
+			<copy todir="${build.destroot}/WEB-INF" file="defaultroot/WEB-INF/struts.xml"/>
+			<copy todir="${build.destroot}/WEB-INF" file="defaultroot/WEB-INF/wsdl.properties"/>
+			<copy todir="${build.destroot}/WEB-INF/lib" file="defaultroot/WEB-INF/lib/ECharts-2.2.6.jar"/>
+			<!-- 压缩补丁包文件 -->
+			<zip 
+				destfile="D:/${build.PatchName}.zip" 
+				basedir="${build.delete.dest}"
+				includes = "**/*.*"/>
+			<!-- 删除临时文件夹 -->
+			<delete dir="${build.delete.dest}/"/>
+		</target>
+		
+	<!-- sql语句的文件，必须放在sql文件夹下【修改此处】 -->
+	    <target name="can_copy_sql" if="sql_dir">
+	    	<!--<copy todir="${build.delete.dest}/sql">
+	    		<fileset dir="sql">
+	    			<include name="SQL.txt"/>
+	    		</fileset>
+	    	</copy> -->
+	    </target>
+
+	<!-- 盖包说明和打包说明都必须放在"相关文档"文件夹下 【修改此处】 -->
+	    <target name="can_copy_xgwd" if="xgwd_dir">
+	    				<copy todir="${build.delete.dest}/" >
+	    					<fileset dir="相关文档">
+	    						<include name="盖包说明daiql20170518.doc"/>
+	    						<include name="打包说明daiql20170518.doc"/>
+	    					</fileset>
+	    				</copy>
+	    </target>
+	    
+	    	<!-- 清除文件 -->
+		<target name="clean">
+			<delete dir="${build.delete.dest}"/>
+		</target>
+	
+</project>
