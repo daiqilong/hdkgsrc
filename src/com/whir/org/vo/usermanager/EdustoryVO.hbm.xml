@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 2.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+<hibernate-mapping>
+    <class name="com.whir.org.vo.usermanager.EdustoryVO"
+        table="ORG_EMPLOYEE_EDUSTORY">
+        <id name="id" column="id">
+            <generator class="native" />
+        </id>
+        <property name="schools" column="SCHOOLS" />
+        <property name="speciality" column="SPECIALITY" />
+        <property name="education" column="EDUCATION" />
+        <property name="endDate" column="ENDDATE" />
+        <property name="beginDate" column="BEGINDATE" />
+
+		<property name="learningStyle" column="LEARNING_STYLE" />
+		<property name="degree" column="DEGREE" />
+		<property name="specialityType" column="SPECIALITY_TYPE" />
+		<property name="foreignType" column="FOREIGN_TYPE" />
+		<property name="foreignLevel" column="FOREIGN_LEVEL" />
+		<property name="byzh" column="BYZH" />
+
+        <many-to-one name="employeeVO"
+            class="com.whir.org.vo.usermanager.EmployeeVO"
+            cascade="none"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            column="EMP_ID" />
+    </class>
+</hibernate-mapping>

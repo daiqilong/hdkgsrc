@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 2.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+<hibernate-mapping>
+<class name="com.whir.org.vo.usermanager.EmployeeVO" table="ORG_EMPLOYEE" schema="EZOFFICE">
+<id name="empId" column="EMP_ID" type="long">
+	<generator class="native"/>
+</id>
+<property name="empOrgIdString" column="EMPORGIDSTRING" type="string" length="120"/>
+<property name="empResumeNum" column="EMPRESUMENUM" type="string" length="1"/>
+<property name="empName" column="EMPNAME" type="string" length="20" not-null="true"/>
+<property name="empNumber" column="EMPNUMBER" type="string" length="10"/>
+<property name="empFireDate" column="EMPFIREDATE" type="timestamp" length="7"/>
+<property name="empHireDate" column="EMPHIREDATE" type="timestamp" length="7"/>
+<property name="empBirth" column="EMPBIRTH" type="timestamp" length="7"/>
+<property name="empPhoto" column="EMPPHOTO" type="string" length="20"/>
+<property name="empSex" column="EMPSEX" type="byte" length="1"/>
+<property name="empNation" column="EMPNATION" type="string" length="20"/>
+<property name="empIsMarriage" column="EMPISMARRIAGE" type="byte" length="1"/>
+<property name="empAddress" column="EMPADDRESS" type="string" length="60"/>
+<property name="empZipCode" column="EMPZIPCODE" type="string" length="10"/>
+<property name="empPhone" column="EMPPHONE" type="string" length="20"/>
+<property name="empMobilePhone" column="EMPMOBILEPHONE" type="string" length="20"/>
+<property name="empBusinessPhone" column="EMPBUSINESSPHONE" type="string" length="20"/>
+<property name="empBusinessFax" column="EMPBUSINESSFAX" type="string" length="20"/>
+<property name="empEmail" column="EMPEMAIL" type="string"/>
+<property name="empEmail2" column="EMPEMAIL2" type="string"/>
+<property name="empEmail3" column="EMPEMAIL3" type="string"/>
+<property name="empWebAddress" column="EMPWEBADDRESS" type="string"/>
+<property name="empEnglishName" column="EMPENGLISHNAME" type="string" length="50"/>
+<property name="empInterest" column="EMPINTEREST" type="string" length="50"/>
+<property name="empHeight" column="EMPHEIGHT" type="short" length="3"/>
+<property name="empWeight" column="EMPWEIGHT" type="short" length="3"/>
+<property name="empBloodType" column="EMPBLOODTYPE" type="string" length="2"/>
+<property name="empNativePlace" column="EMPNATIVEPLACE" type="string"/>
+<property name="empCountry" column="EMPCOUNTRY" type="string"/>
+<property name="empState" column="EMPSTATE" type="string"/>
+<property name="empCounty" column="EMPCOUNTY" type="string"/>
+<property name="empPolity" column="EMPPOLITY" type="string" length="20"/>
+<property name="empIdCard" column="EMPIDCARD" type="string" length="18"/>
+<property name="empWorkExperience" column="EMPWORKEXPERIENCE" type="string" length="400"/>
+<property name="empTrainExperience" column="EMPTRAINEXPERIENCE" type="string" length="400"/>
+<property name="empEducationExperience" column="EMPEDUCATIONEXPERIENCE" type="string" length="400"/>
+<property name="empStudyExperience" column="EMPSTUDYEXPERIENCE" type="string" length="20"/>
+<property name="empDegree" column="EMPDEGREE" type="string" length="20"/>
+<property name="empPosition" column="EMPPOSITION" type="string" length="30"/>
+<property name="empDuty" column="EMPDUTY" type="string" length="30"/>
+<property name="empPostTitle" column="EMPPOSTTITLE" type="string" length="30"/>
+<property name="empStatus" column="EMPSTATUS" type="byte" length="1"/>
+<property name="empLivingPhoto" column="EMPLIVINGPHOTO" type="string"/>
+<property name="empDescribe" column="EMPDESCRIBE" type="string"/>
+<property name="empGnome" column="EMPGNOME" type="string"/>
+<property name="empHeadImg" column="EMPHEADIMG" />
+<property name="empSignImg" column="EMPSIGNIMG" />
+<property name="empLeaderName" column="EMPLEADERNAME" type="string"/>
+<property name="empLeaderId" column="EMPLEADERID" type="string"/>
+
+<property name="insuranceNumber" column="INSURANCENUMBER"/>
+<property name="postTitleSeries" column="POSTTITLESERIES" />
+<property name="postCompetence" column="POSTCOMPETENCE" />
+<property name="postLevel" column="POSTLEVEL" />
+<property name="postGainTime" column="POSTGAINTIME" />
+<property name="currentPostTitle" column="CURRENTPOSTTITLE" />
+<property name="otherPostTitle" column="OTHERPOSTTITLE" />
+<property name="certifyNumber" column="CERTIFYNUMBER" />
+<property name="fireReason" column="FIREREASON" />
+<property name="contractAbout" column="CONTRACTABOUT" />
+<property name="familyMember" column="FAMILYMEMBER"/>
+
+<property name="browseRange" column="BROWSERANGE" type="string"/>
+<property name="browseRangeName" column="BROWSERANGENAME" type="string"/>
+<property name="createdOrg" column="CREATEDORG" type="long"/>
+
+<property name="userAccounts" column="USERACCOUNTS" type="string"/>
+<property name="userSimpleName" column="USERSIMPLENAME" type="string"/>
+<property name="userPassword" column="USERPASSWORD" type="string"/>
+<property name="userIsActive" column="USERISACTIVE" type="byte"/>
+<property name="userIsDeleted" column="USERISDELETED" type="byte"/>
+<property name="userIsFormalUser" column="USERISFORMALUSER" />
+<property name="userIsSuper" column="USERISSUPER" type="byte"/>
+<property name="userSuperBegin" column="USERSUPERBEGIN" type="timestamp"/>
+<property name="userSuperEnd" column="USERSUPEREND" type="timestamp"/>
+<property name="userOrderCode" column="USERORDERCODE" type="string"/>
+<property name="keyValidate" column="KEYVALIDATE"/>
+<property name="keySerial" column="KEYSERIAL"/>
+<property name="mailPost" column="MAILPOST"/>
+
+<property name="graduateDate" column="GRADUATEDATE" />
+<property name="workPackStartDate" column="WORKPACKSTARTDATE" />
+<property name="workPackEndDate" column="WORKPACKENDDATE" />
+<property name="hirePackStartDate" column="HIREPACKSTARTDATE" />
+<property name="hirePackEndDate" column="HIREPACKENDDATE" />
+<property name="fosterPackStartDate" column="FOSTERPACKSTARTDATE" />
+<property name="fosterPackEndDate" column="FOSTERPACKENDDATE" />
+<property name="wpContStartDate" column="WPCONTSTARTDATE" />
+<property name="wpContEndtDate" column="WPCONTENDTDATE" />
+<property name="intoCompanyDate" column="INTOCOMPANYDATE" />
+
+<property name="endowmentInsurance" column="ENDOWMENTINSURANCE" />
+<property name="medicare" column="MEDICARE" />
+<property name="accumulationFund" column="ACCUMULATIONFUND" />
+<property name="compensation" column="compensation" />
+<property name="introducer" column="introducer" />
+
+<property name="dignity" column="DIGNITY" />
+<property name="section" column="SECTION1" />
+<property name="speciality" column="SPECIALITY" />
+<property name="partyDate" column="PARTYDATE" />
+<property name="jobStatus" column="JOBSTATUS" />
+
+<property column="DOMAIN_ID" name="domainId" />
+<property column="RTXISLOGIN" name="rtxIsLogin" />
+<property name="olRemoteMac" column="OLREMOTEMAC" />
+<property name="skin" column="SKIN" />
+<property name="isChangePwd" column="ISCHANGEPWD" />
+<property name="mailboxSize" column="MAILBOXSIZE" />
+<property name="curStatus" column="CURSTATUS" />
+<property name="userDefineStatus" column="USERDEFINESTATUS" />
+<property name="netDiskSize" column="NETDISKSIZE" />
+<property name="imId" column="IMID" />
+<property name="sidelineOrg" column="SIDELINEORG" />
+<property name="sidelineOrgName" column="SIDELINEORGNAME" />
+<property name="workAddress" column="WORKADDRESS" />
+<property name="empDutyLevel" column="EMPDUTYLEVEL" />
+<property name="signatureImgName" column="SIGNATUREIMGNAME" />
+<property name="signatureImgSaveName" column="SIGNATUREIMGSAVENAME" />
+
+
+<property name="serial" column="serial" />
+<property name="serialPwd" column="serialpwd" />
+<property name="personalKind" column="personalkind" />
+<property name="zhuanzhengDate" column="zhuanzhengdate" />
+<property name="lizhiDate" column="lizhidate" />
+<property name="empFireType" column="empfiretype" />
+<property name="hujiAddress" column="hujiaddress" />
+<property name="isdimissionprove" column="isdimissionprove" />
+<property name="speciality1" column="speciality1" />
+<property name="speciality2" column="speciality2" />
+<property name="language1" column="language1" />
+<property name="langlevel1" column="langlevel1" />
+<property name="language2" column="language2" />
+<property name="langlevel2" column="langlevel2" />
+<property name="language3" column="language3" />
+<property name="langlevel3" column="langlevel3" />
+<property name="zhicheng" column="zhicheng" />
+<property name="canSendMail" column="canSendMail" />
+
+<property name="lizhiExplain" column="lizhi_explain" />
+<property name="notreturnGoods" column="notreturn_goods" />
+<property name="chargeKK" column="charge_kk" />
+<property name="lizhiAdvice" column="lizhi_advice" />
+
+<property name="isPasswordRule" column="is_password_rule" />
+<property name="isInitPassword" column="is_init_password" />
+<property name="latestLogonTime" column="latest_logon_time" />
+<property name="mobileUserFlag" column="mobile_user_flag" />
+
+<property name="formerName" column="former_name" />
+<property name="unitId" column="unit_id" />
+<property name="partjobDuty" column="partjob_duty" />
+<property name="personTypeId" column="person_type_id" />
+<property name="marriageStatus" column="marriage_status" />
+<property name="hkxz" column="hk_xz" />
+<property name="sfzQfjg" column="sfz_qfjg" />
+<property name="passportNo" column="passport_no" />
+<property name="passportNo2" column="passport_no2" />
+<property name="sfzAddress" column="sfz_address" />
+<property name="sfzPostcode" column="sfz_postcode" />
+<property name="familyPostcode" column="family_postcode" />
+<property name="livingAddress" column="now_living_address" />
+<property name="nowLivingPostcode" column="now_living_postcode" />
+<property name="zzzNo" column="zzz_no" />
+<property name="zzzDate" column="zzz_date" />
+<property name="insuranceCardNo" column="insurance_card_no" />
+<property name="payCardNo" column="pay_card_no" />
+<property name="isApplyAccount" column="is_apply_account" />
+<property name="isAdCheck" column="is_ad_check" />
+<property name="userIsSleep" column="user_is_sleep" />
+<property name="isMobilePush" column="is_mobile_push" />
+<property name="isMobileReceive" column="is_mobile_receive" />
+
+<property name="gzFf" column="gz_ff" />
+
+<property column="charge_leader_ids" name="chargeLeaderIds" />
+<property column="charge_leader_names" name="chargeLeaderNames" />
+<property column="dept_leader_ids" name="deptLeaderIds" />
+<property column="dept_leader_names" name="deptLeaderNames" />
+
+<property name="welfareFfOnoff" column="welfare_ff_onoff" />
+<property name="welfareBcffOnoff" column="welfare_bcff_onoff" />
+
+<property name="userSleepReasons" column="user_sleep_reasons" />
+<property name="empMobilePhone2" column="EMPMOBILEPHONE2"/>
+<property name="addressId" column="ADDRESSID"/>
+<property name="enterprisenumber" column="oa_enterprise_number"/>
+
+<set name="organizations"
+     table="ORG_ORGANIZATION_USER"
+     lazy="true"
+     inverse="false"
+     cascade="none"
+     sort="unsorted"
+	 schema="EZOFFICE">
+     <key column="Emp_id"/>
+     <many-to-many
+          class="com.whir.org.vo.organizationmanager.OrganizationVO"
+	  column="Org_Id"
+	  outer-join="false"/>
+</set>
+
+<set name="roles"
+     table="ORG_User_Role"
+     lazy="true"
+     inverse="false"
+     cascade="none"
+     sort="unsorted"
+	 schema="EZOFFICE">
+     <key column="Emp_id"/>
+     <many-to-many
+          class="com.whir.org.vo.rolemanager.RoleVO"
+	  column="Role_id"
+	  outer-join="false"/>
+</set>
+
+<set name="groups"
+     table="ORG_USER_GROUP"
+     lazy="true"
+     inverse="false"
+     cascade="none"
+     sort="unsorted"
+	 schema="EZOFFICE">
+     <key column="Emp_id"/>
+     <many-to-many
+          class="com.whir.org.vo.groupmanager.GroupVO"
+	  column="Group_id"
+	  outer-join="false"/>
+</set>
+
+<set name="rightScopes"
+     table="ORG_RIGHTSCOPE"
+     lazy="true"
+	 outer-join="false"
+     inverse="false"
+     cascade="none"
+     sort="unsorted"
+	 schema="EZOFFICE">
+     <key column="Emp_id"/>
+     <one-to-many
+          class="com.whir.org.vo.rolemanager.RightScopeVO"
+	 />
+</set>
+<set name="mailUsers"
+	lazy="true"
+    inverse="true"
+	schema="EZOFFICE">
+        <key>
+            <column name="EMP_ID" />
+        </key>
+        <one-to-many
+            class="com.whir.ezoffice.personalwork.innermailbox.po.InnerMailUserPO"
+        />
+    </set>
+       <set name="competenceVO"
+            schema="EZOFFICE"
+            table="ORG_EMPLOYEE_COMPETENCE"
+            lazy="false"
+            inverse="true"
+            cascade="none"
+            order-by="id "
+            sort="unsorted">
+            <key column="emp_id" />
+            <one-to-many class="com.whir.org.vo.usermanager.CompetenceVO" />
+        </set>
+
+       <set name="contractVO"
+            schema="EZOFFICE"
+            table="ORG_EMPLOYEE_CONTRACT"
+            lazy="false"
+            inverse="true"
+            cascade="none"
+            order-by="id "
+            sort="unsorted">
+            <key column="emp_id" />
+            <one-to-many class="com.whir.org.vo.usermanager.ContractVO" />
+        </set>
+        <set name="edustoryVO"
+            schema="EZOFFICE"
+            table="ORG_EMPLOYEE_EDUSTORY"
+            lazy="false"
+            inverse="true"
+            cascade="none"
+            order-by="id "
+            sort="unsorted">
+            <key column="emp_id" />
+            <one-to-many class="com.whir.org.vo.usermanager.EdustoryVO" />
+        </set>
+          <set name="trainhistoryVO"
+            schema="EZOFFICE"
+            table="ORG_EMPLOYEE_TRAINHISTORY"
+            lazy="false"
+            inverse="true"
+            cascade="none"
+            order-by="id "
+            sort="unsorted">
+            <key column="emp_id" />
+            <one-to-many class="com.whir.org.vo.usermanager.TrainhistoryVO" />
+        </set>
+
+		<one-to-one name="kqUser" class="com.whir.ezoffice.hrm.kq.po.KQUserPO" cascade="none" outer-join="auto" />
+</class>
+</hibernate-mapping>

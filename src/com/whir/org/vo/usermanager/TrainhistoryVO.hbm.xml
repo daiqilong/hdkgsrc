@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 2.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+<hibernate-mapping>
+    <class name="com.whir.org.vo.usermanager.TrainhistoryVO"
+        table="ORG_EMPLOYEE_TRAINHISTORY"
+        schema="EZOFFICE">
+        <id name="id" column="id">
+            <generator class="native" />
+        </id>
+        <property name="trainName" column="TRAINNAME" />
+        <property name="trainUnit" column="TRAINUNIT" />
+        <property name="trainMemo" column="TRAINMEMO" />
+        <property name="endDate" column="ENDDATE" />
+        <property name="beginDate" column="BEGINDATE" />
+        <many-to-one name="employeeVO"
+            class="com.whir.org.vo.usermanager.EmployeeVO"
+            cascade="none"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            column="EMP_ID" />
+    </class>
+</hibernate-mapping>

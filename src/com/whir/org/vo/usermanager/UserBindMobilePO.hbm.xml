@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 2.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+<hibernate-mapping>
+    <class name="com.whir.org.vo.usermanager.UserBindMobilePO" table="org_employee_bindmobile">
+        <id name="id" column="id">
+            <generator class="native" />
+        </id>
+        <property name="sid" column="sid" />
+        <property name="phone" column="phone" />
+        <property name="type" column="type" />
+		<property name="bindstatus" column="bindstatus" />
+		<property name="loginstatus" column="loginstatus" />
+		<property name="loginDate" column="loginDate" />
+		<property name="bindDate" column="bindDate" />
+
+        <many-to-one name="userPO"
+            class="com.whir.org.vo.usermanager.UserPO"
+            cascade="none"
+            outer-join="auto"
+            update="false"
+            insert="true"
+            column="user_id" />
+    </class>
+</hibernate-mapping>

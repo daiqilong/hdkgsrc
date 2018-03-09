@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 2.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+<hibernate-mapping>
+<class name="com.whir.org.vo.usermanager.UserPO" table="ORG_EMPLOYEE" schema="EZOFFICE">
+	<id name="empId" column="EMP_ID" type="long">
+		<generator class="native"/>
+	</id>
+	<property name="empName" column="EMPNAME" type="string" length="20" not-null="true"/>
+	<property name="empNumber" column="EMPNUMBER" type="string" length="10"/>
+	<property name="empEnglishName" column="EMPENGLISHNAME" type="string" length="50"/>
+
+	<property name="empSex" column="EMPSEX" type="byte" length="1"/>
+
+	<property name="empDuty" column="EMPDUTY" type="string" length="30"/>
+
+	<property name="empMobilePhone" column="EMPMOBILEPHONE" type="string" length="20"/>
+
+	<property name="empLeaderName" column="EMPLEADERNAME" type="string"/>
+	<property name="empLeaderId" column="EMPLEADERID" type="string"/>
+
+	<property name="browseRange" column="BROWSERANGE" type="string"/>
+	<property name="browseRangeName" column="BROWSERANGENAME" type="string"/>
+	<property name="createdOrg" column="CREATEDORG" type="long"/>
+
+	<property name="empIsMarriage" column="EMPISMARRIAGE" type="byte" length="1"/>
+	<property name="empStatus" column="EMPSTATUS" type="byte" length="1"/>
+
+	<property name="empHeight" column="EMPHEIGHT" type="short" length="3"/>
+	<property name="empWeight" column="EMPWEIGHT" type="short" length="3"/>
+
+	<property name="userAccounts" column="USERACCOUNTS" type="string"/>
+	<property name="userSimpleName" column="USERSIMPLENAME" type="string"/>
+	<property name="userPassword" column="USERPASSWORD" type="string"/>
+	<property name="userIsActive" column="USERISACTIVE" type="byte"/>
+	<property name="userIsDeleted" column="USERISDELETED" type="byte"/>
+	<property name="userIsFormalUser" column="USERISFORMALUSER" />
+	<property name="userIsSuper" column="USERISSUPER" type="byte"/>
+	<property name="userSuperBegin" column="USERSUPERBEGIN" type="timestamp"/>
+	<property name="userSuperEnd" column="USERSUPEREND" type="timestamp"/>
+	<property name="userOrderCode" column="USERORDERCODE" type="string"/>
+	<property name="keyValidate" column="KEYVALIDATE"/>
+	<property name="keySerial" column="KEYSERIAL"/>
+
+	<property column="DOMAIN_ID" name="domainId" />
+	<property column="RTXISLOGIN" name="rtxIsLogin" />
+
+	<property name="curStatus" column="CURSTATUS" />
+	<property name="userDefineStatus" column="USERDEFINESTATUS" />
+
+	<property name="skin" column="SKIN" />
+	<property name="isChangePwd" column="ISCHANGEPWD" />
+	<property name="mailboxSize" column="MAILBOXSIZE" />
+
+	<property name="netDiskSize" column="NETDISKSIZE" />
+	<property name="imId" column="IMID" />
+	<property name="sidelineOrg" column="SIDELINEORG" />
+	<property name="sidelineOrgName" column="SIDELINEORGNAME" />
+
+	<property name="empDutyLevel" column="EMPDUTYLEVEL" />
+	<property name="signatureImgName" column="SIGNATUREIMGNAME" />
+	<property name="signatureImgSaveName" column="SIGNATUREIMGSAVENAME" />
+
+	<property name="serial" column="serial" />
+	<property name="serialPwd" column="serialpwd" />
+
+	<property name="canSendMail" column="canSendMail" />
+
+	<property name="isPasswordRule" column="is_password_rule" />
+	<property name="isInitPassword" column="is_init_password" />
+	<property name="latestLogonTime" column="latest_logon_time" />
+	<property name="mobileUserFlag" column="mobile_user_flag" />
+
+	<property name="isApplyAccount" column="is_apply_account" />
+	<property name="isAdCheck" column="is_ad_check" />
+	<property name="userIsSleep" column="user_is_sleep" />
+	<property name="isMobilePush" column="is_mobile_push" />
+	<property name="isMobileReceive" column="is_mobile_receive" />
+
+	<property column="charge_leader_ids" name="chargeLeaderIds" />
+	<property column="charge_leader_names" name="chargeLeaderNames" />
+	<property column="dept_leader_ids" name="deptLeaderIds" />
+	<property column="dept_leader_names" name="deptLeaderNames" />
+
+	<property name="userSleepReasons" column="user_sleep_reasons" />
+	<property name="securitypolicy" column="mobile_securitypolicy" />
+
+    <property name="empIdCard" column="EMPIDCARD" type="string" length="18"/>
+    <property name="empMobilePhone2" column="EMPMOBILEPHONE2" type="string"/>
+
+    <property name="empBirth" column="EMPBIRTH" type="timestamp"/>
+    <property name="workAddress" column="WORKADDRESS" />
+    
+    <property name="userPageSize" column="USER_PAGESIZE" />
+    <property name="empBusinessPhone" column="EMPBUSINESSPHONE"/>
+    <property name="empPosition" column="EMPPOSITION"/>
+    <property name="empLivingPhoto" column="EMPLIVINGPHOTO"/>
+    <property name="firstAccessHead" column="first_access_head"/>
+    <property name="pageFontsize" column="page_fontsize"/>
+ 	<property name="enterprisenumber" column="oa_enterprise_number"/>
+	<set name="organizations"
+		 table="ORG_ORGANIZATION_USER"
+		 lazy="true"
+		 inverse="false"
+		 cascade="none"
+		 sort="unsorted"
+		 schema="EZOFFICE">
+		 <key column="Emp_id"/>
+		 <many-to-many class="com.whir.org.vo.organizationmanager.OrganizationVO" column="Org_Id" outer-join="false"/>
+	</set>
+
+	<set name="roles"
+		 table="ORG_User_Role"
+		 lazy="true"
+		 inverse="false"
+		 cascade="none"
+		 sort="unsorted"
+		 schema="EZOFFICE">
+		 <key column="Emp_id"/>
+		 <many-to-many class="com.whir.org.vo.rolemanager.RoleVO" column="Role_id" outer-join="false"/>
+	</set>
+
+	<set name="groups"
+		 table="ORG_USER_GROUP"
+		 lazy="true"
+		 inverse="false"
+		 cascade="none"
+		 sort="unsorted"
+		 schema="EZOFFICE">
+		 <key column="Emp_id"/>
+		 <many-to-many class="com.whir.org.vo.groupmanager.GroupVO" column="Group_id" outer-join="false"/>
+	</set>
+
+	<set name="rightScopes"
+		 table="ORG_RIGHTSCOPE"
+		 lazy="true"
+		 outer-join="false"
+		 inverse="false"
+		 cascade="none"
+		 sort="unsorted"
+		 schema="EZOFFICE">
+		 <key column="Emp_id"/>
+		 <one-to-many class="com.whir.org.vo.rolemanager.RightScopeVO"/>
+	</set>
+</class>
+</hibernate-mapping>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 2.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+<hibernate-mapping>
+    <class name="com.whir.org.vo.usermanager.ContractVO"
+        table="ORG_EMPLOYEE_CONTRACT">
+        <id name="id" column="id">
+            <generator class="native" />
+        </id>
+        <property name="givenDate" column="GIVENDATE" />
+        <property name="endDate" column="ENDDATE" />
+        <property name="beginDate" column="BEGINDATE" />
+		<property name="contractType" column="CONTRACT_TYPE" />
+		<property name="contractLimit" column="CONTRACT_LIMIT" />
+		<property name="trailPeriod" column="trial_period" />
+		<property name="ownerArea" column="owner_area" />
+		<property name="signedNumber" column="signed_number" />
+
+
+		<property name="issigned" column="issigned" />
+		<property name="otherinfo" column="otherinfo" />
+		<property name="effectivedate" column="effectivedate" />
+		<property name="changedate" column="changedate" />
+		<property name="changereason" column="changereason" />
+		<property name="changecontent" column="changecontent" />
+		<property name="changeperiod" column="changeperiod" />
+		<property name="terminationdate" column="terminationdate" />
+		<property name="terminationreason" column="terminationreason" />
+		<property name="jjbcj" column="jjbcj" />
+		<property name="pcj" column="pcj" />
+
+		<property name="trailDate" column="trailDate" />
+
+        <many-to-one name="employeeVO"
+            class="com.whir.org.vo.usermanager.EmployeeVO"
+            cascade="none"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            column="EMP_ID" />
+
+		<many-to-one name="contractStyle"
+            class="com.whir.ezoffice.personnelmanager.po.HRContractTypePO"
+            cascade="none"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            column="CONTRACT_STYLE" />
+    </class>
+</hibernate-mapping>

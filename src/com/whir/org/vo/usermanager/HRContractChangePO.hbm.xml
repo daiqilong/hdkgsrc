@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 2.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+<hibernate-mapping>
+    <class name="com.whir.org.vo.usermanager.HRContractChangePO" table="ORG_EMPLOYEE_CONTRACT_CHANGE">
+        <id name="id" column="id">
+            <generator class="native" />
+        </id>
+
+		<property name="contractId" column="CONTRACT_id" />
+		<property name="changeDate" column="change_date" />
+		<property name="changeReason" column="change_reason" />
+		<property name="changeContent" column="change_content" />
+		<property name="changeLimit" column="change_limit" />
+
+		<property name="createDate" column="create_date" />
+    </class>
+</hibernate-mapping>
