@@ -245,7 +245,7 @@ public class BackLogBD extends HibernateBase {
 	            map10.put("backlogModule", "11");
 	            map10.put("backlogNum", capitalConstructionAction.capitalConstructionPageCount(userName));
 //	            map10.put("backlogNum", "0");
-	            map10.put("backlogModuleName", "基建待办");
+	            map10.put("backlogModuleName", "基建财务");
 	            map10.put("backlogModuleEName", "jjdb");
 	            map10.put("wtFlag", jjwt);
 	            list.add(map10);
