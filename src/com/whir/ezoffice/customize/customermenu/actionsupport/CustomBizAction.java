@@ -651,6 +651,8 @@ public class CustomBizAction extends BaseActionSupport {
     	if("1".equals(request.getParameter("saveAllFieldsFlag"))){
     		new CustomerMenuDB().saveListFields(request);
     	}
+    	com.whir.org.manager.bd.ManagerBD managerBD = new com.whir.org.manager.bd.ManagerBD();
+    	String orgId = CommonUtils.getSessionOrgId(request).toString();
     	
     	int pageSize = com.whir.common.util.CommonUtils.getUserPageSize(request);
 		int currentPage = 0;
@@ -679,6 +681,14 @@ public class CustomBizAction extends BaseActionSupport {
         CustomerMenuDB cDB = new CustomerMenuDB();
         String selectPara = cDB.getSelectPara(po,request);
         String fromPara = " "+tableName+" "; 
+        //如下判断是中心领导值班查询模块中各自中心的人查询各自中心的值班信息的判断
+    	if(menuId.equals("40151")){
+    		if(!managerBD.hasRight(CommonUtils.getSessionUserId(request).toString(), "zxldzbxxck*01*01")){
+            	fromPara+=" ,(select b.whir$zbzxldzzdb_f3666 from whir$zbzxldzzdb b,"
+            			+ "(select a.orgparentorgid from org_organization a where org_id='"+orgId+"') c where "
+            			+ "substr(b.whir$zbzxldzzdb_f3665,instr(b.whir$zbzxldzzdb_f3665,';')+1,length(b.whir$zbzxldzzdb_f3665)-instr(b.whir$zbzxldzzdb_f3665,';')) = c.orgparentorgid) d";
+            }
+        }
         String wherePara = cDB.getWherePara(po,request);
         String orderByPara = " " + cDB.getOrderByPara(po,request);
 
@@ -726,11 +736,16 @@ public class CustomBizAction extends BaseActionSupport {
         	}
         }
           
-          logger.debug("-----------------------------------------------------------");           
-          logger.debug("-------------------selectPara----------------------"+selectPara);
-          logger.debug("-------------------fromPara----------------------"+fromPara);
-          logger.debug("-------------------wherePara----------------------"+wherePara);
-          logger.debug("-------------------orderByPara----------------------"+orderByPara);
+          if(menuId.equals("40151")){
+        	if(!managerBD.hasRight(CommonUtils.getSessionUserId(request).toString(), "zxldzbxxck*01*01")){
+	        	wherePara+=" and whir$centreDuty_department=d.whir$zbzxldzzdb_f3666 ";
+	        }
+          } 
+          System.out.println("-----------------------------------------------------------");           
+          System.out.println("-------------------selectPara----------------------"+selectPara);
+          System.out.println("-------------------fromPara----------------------"+fromPara);
+          System.out.println("-------------------wherePara----------------------"+wherePara);
+          System.out.println("-------------------orderByPara----------------------"+orderByPara);
         String tableId = request.getParameter("tableId");
         String totFileds = cDB.getTotleFields(tableId,
                                             request,

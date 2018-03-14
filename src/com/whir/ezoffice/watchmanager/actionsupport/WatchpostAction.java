@@ -34,6 +34,8 @@ public class WatchpostAction extends BaseActionSupport {
 	private String menuViewId;
 	// 部门名称
 	private String menuView;
+	// 值班人员数
+	private String dutyNumber;
 
 	public String getMenuViewId() {
 		return menuViewId;
@@ -81,6 +83,14 @@ public class WatchpostAction extends BaseActionSupport {
 
 	public void setSearchDepName(String searchDepName) {
 		this.searchDepName = searchDepName;
+	}
+
+	public String getDutyNumber() {
+		return dutyNumber;
+	}
+
+	public void setDutyNumber(String dutyNumber) {
+		this.dutyNumber = dutyNumber;
 	}
 
 	// 普通岗位
@@ -215,7 +225,7 @@ public class WatchpostAction extends BaseActionSupport {
 		if (request.getParameter("startPage") != null) {
 			currentPage = Integer.parseInt(request.getParameter("startPage"));
 		}
-		String viewSQL = "ppp.whir$posttab_pname,ppp.whir$posttab_dno,ppp.whir$posttab_id";
+		String viewSQL = "ppp.whir$posttab_pname,ppp.whir$posttab_dno,ppp.whir$posttab_id,ppp.whir$posttab_dutyNumber";
 		String fromSQL = "whir$posttab ppp ";
 		StringBuffer whereSQL = new StringBuffer();
 		whereSQL.append("where");
@@ -420,8 +430,8 @@ public class WatchpostAction extends BaseActionSupport {
 	}
 
 	public String saveLeaderPost() {
-		String sql = "insert into whir$posttab (whir$posttab_id,whir$posttab_pname,whir$posttab_dno,whir$posttab_class) values(whir$posttab_SEQ.nextval,'"
-				+ postName + "','" + menuViewId + "','10')";
+		String sql = "insert into whir$posttab (whir$posttab_id,whir$posttab_pname,whir$posttab_dno,whir$posttab_dutyNumber,whir$posttab_class) values(whir$posttab_SEQ.nextval,'"
+				+ postName + "','" + menuViewId + "','" + dutyNumber +"','10')";
 		System.out.println("新增中心领导岗位sql===" + sql);
 		new WatchArrangeUtils().executeSql(sql);
 		printResult("success");

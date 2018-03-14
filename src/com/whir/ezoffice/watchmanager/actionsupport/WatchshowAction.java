@@ -92,7 +92,9 @@ public class WatchshowAction extends BaseActionSupport{
 			if(excelList!=null && !excelList.isEmpty()){
 				excelInfos = getShowExcelInfos(excelList);
 			} else {
+				System.out.println("excel未导入数据：");
 				empInfos = getShowPostInfos(postId, arrangeDateFrom, arrangeDateEnd);
+				System.out.println("empInfos.size()::"+empInfos.size());
 			}
 		}else{
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd"); 
@@ -224,11 +226,16 @@ public class WatchshowAction extends BaseActionSupport{
 	//进入中心领导值班查询
 	public String centerLeaderShow() throws Exception{
 		List centerlist = new ArrayList();
-		String excelsql = "select distinct whir$centreduty_department as id,whir$centreduty_department from whir$centreduty";
-		String centersql = "select distinct whir$posttab_id,whir$posttab_pname from whir$posttab where whir$posttab_class='10'";
+		//String excelsql = "select distinct whir$centreduty_department as id,whir$centreduty_department from whir$centreduty";
+		String excelsql = "select e.whir$posttab_id as id,d.whir$centreduty_department from whir$posttab e,"
+				+ "(select substr(b.whir$zbzxldzzdb_f3665,instr(b.whir$zbzxldzzdb_f3665,';')+1,length(b.whir$zbzxldzzdb_f3665)-instr(b.whir$zbzxldzzdb_f3665,';')) as id, "
+				+ "c.whir$centreduty_department from whir$zbzxldzzdb b,(select distinct a.whir$centreduty_department as whir$centreduty_department from whir$centreduty a) c "
+				+ "where b.whir$zbzxldzzdb_f3666=c.whir$centreduty_department) d where e.whir$posttab_dno=d.id and e.whir$posttab_class='10' order by e.whir$posttab_dno";
+		String centersql = "select distinct whir$posttab_pname as id,whir$posttab_pname from whir$posttab where whir$posttab_class='10'";
 		List list = new WatchArrangeUtils().getList(excelsql);
 		if(list!=null && !list.isEmpty()){
-			centerlist =getSortList(list);
+			//centerlist =getSortList(list);
+			centerlist = list;
 		} else {
 			centerlist = new WatchArrangeUtils().getList(centersql);
 		}
@@ -242,25 +249,37 @@ public class WatchshowAction extends BaseActionSupport{
 			List excelInfos = new ArrayList();
 			//中心岗位日期范围值班日历
 			List excelList = new ArrayList();
-			String sql = "select distinct concat(concat(whir$centreduty_year,concat('-',whir$centreduty_mouth)),concat('-',whir$centreduty_data)) as data ,  whir$centreduty_dutystaff " +
-					" from whir$centreduty where concat(concat(whir$centreduty_year,concat('-',whir$centreduty_mouth)),concat('-',whir$centreduty_data)) between '"+arrangeDateFrom+"' and '"+arrangeDateEnd+"' and whir$centreduty_department='"+postId+"' order by data";
+			String sql = "select distinct concat(concat(whir$centreduty_year,concat('-',whir$centreduty_mouth)),concat('-',whir$centreduty_data)) as data ,  whir$centreduty_dutystaff,whir$centreduty_sort " +
+					" from whir$centreduty where concat(concat(whir$centreduty_year,concat('-',whir$centreduty_mouth)),concat('-',whir$centreduty_data)) between '"+arrangeDateFrom+"' and '"+arrangeDateEnd+"' and whir$centreduty_department='"+postId+"' order by data,whir$centreduty_sort";
 			excelList = new WatchArrangeUtils().getList(sql);
 			System.out.println("ZZZZ:::"+sql);
 			if(excelList!=null && !excelList.isEmpty()){
-				excelInfos = getShowCenterExcelInfos(excelList);
+				excelInfos = getShowExcelInfos(excelList);
+//				excelInfos = getShowCenterExcelInfos(excelList);
 			} else {
 				empInfos = getShowPostInfos(postId, arrangeDateFrom, arrangeDateEnd);
 			}
 			StringBuffer json = new StringBuffer("[");
 			if(excelInfos.size()>0){
-		        for(int i=0;i<excelInfos.size();i++){
+				for(int i=0;i<excelInfos.size();i++){
 		        	Object[] objs = (Object[])excelInfos.get(i);
 		        	json.append("{\"watchtable_id\":\""+i+"\",");
 		        	json.append("\"dates\":\""+objs[0]+"\",");
 		        	json.append("\"mWatchInfo\":\""+objs[2]+"\",");
-		        	json.append("\"mWatchAccount\":\""+objs[3]+"\"},");
+		        	json.append("\"mWatchAccount\":\""+objs[3]+"\",");
+		        	json.append("\"dates1\":\""+objs[4]+"\",");
+		        	json.append("\"mWatchInfo1\":\""+objs[6]+"\",");
+		        	json.append("\"mWatchAccount1\":\""+objs[7]+"\"},");
 		        }
 		        json.delete(json.length()-1, json.length());
+//		        for(int i=0;i<excelInfos.size();i++){
+//		        	Object[] objs = (Object[])excelInfos.get(i);
+//		        	json.append("{\"watchtable_id\":\""+i+"\",");
+//		        	json.append("\"dates\":\""+objs[0]+"\",");
+//		        	json.append("\"mWatchInfo\":\""+objs[2]+"\",");
+//		        	json.append("\"mWatchAccount\":\""+objs[3]+"\"},");
+//		        }
+//		        json.delete(json.length()-1, json.length());
 			} else {
 				if(empInfos.size()>0){
 					for(int i=0;i<empInfos.size();i++){
@@ -268,7 +287,16 @@ public class WatchshowAction extends BaseActionSupport{
 			        	json.append("{\"watchtable_id\":\""+objs[0]+"\",");
 			        	json.append("\"dates\":\""+objs[1]+"\",");
 			        	json.append("\"mWatchInfo\":\""+objs[2]+"\",");
-			        	json.append("\"mWatchAccount\":\""+objs[3]+"\"},");
+			        	json.append("\"mWatchAccount\":\""+objs[3]+"\",");
+			        	if(objs[4]!=null && !"".equals(objs[4])){
+			        		json.append("\"dates1\":\""+objs[1]+"\",");
+				        	json.append("\"mWatchInfo1\":\""+objs[4]+"\",");
+				        	json.append("\"mWatchAccount1\":\""+objs[5]+"\"},");
+			        	} else {
+			        		json.append("\"dates1\":\"\",");
+				        	json.append("\"mWatchInfo1\":\""+objs[4]+"\",");
+				        	json.append("\"mWatchAccount1\":\""+objs[5]+"\"},");
+			        	}
 			        }
 			        json.delete(json.length()-1, json.length());
 				}
@@ -325,7 +353,7 @@ public class WatchshowAction extends BaseActionSupport{
 		        List list = page.getResultList();
 		        List empInfos = new ArrayList();
 				if(list.size()>0){
-					empInfos = getEmpInfos(list);
+					empInfos = getEmpInfos(list,"");
 				}
 				String viewsql = "ppp.id,ppp.pname,ppp.mpa,ppp.mpname,ppp.apa,ppp.apname";
 		        int pageCount = page.getPageCount();
@@ -359,6 +387,8 @@ public class WatchshowAction extends BaseActionSupport{
 		        	Object[] objs = (Object[])empInfos.get(i);
 		        	json.append("{\"watchtable_id\":\""+objs[0]+"\",");
 		        	json.append("\"dates\":\""+objs[1]+"\",");
+		        	json.append("\"dWatchInfo\":\""+objs[6]+"\",");
+		        	json.append("\"dWatchAccount\":\""+objs[7]+"\",");
 		        	json.append("\"mWatchInfo\":\""+objs[2]+"\",");
 		        	json.append("\"mWatchAccount\":\""+objs[3]+"\",");
 		        	json.append("\"aWatchInfo\":\""+objs[4]+"\",");
@@ -385,7 +415,7 @@ public class WatchshowAction extends BaseActionSupport{
 			Date da = new Date();
 			String today = sdf.format(da);
 			
-			String viewSQL = "p.whir$posttab_dname,p.whir$posttab_pname,w.whir$watchtab_mpa,w.whir$watchtab_mpname,w.whir$watchtab_apa,w.whir$watchtab_apname";
+			String viewSQL = "p.whir$posttab_dname,p.whir$posttab_pname,w.whir$watchtab_mpa,w.whir$watchtab_mpname,w.whir$watchtab_apa,w.whir$watchtab_apname,w.whir$watchtab_dpa,w.whir$watchtab_dpname ";
 			String fromSQL = "whir$watchtab w join whir$posttab p on p.whir$posttab_id=w.whir$watchtab_postno ";
 			String whereSQL = "where p.whir$posttab_class='0' and w.whir$watchtab_dates='"+today+"' ";
 			String orderSQL = "order by p.whir$posttab_dno";
@@ -400,9 +430,9 @@ public class WatchshowAction extends BaseActionSupport{
 	        List list = page.getResultList();
 	        List empInfos = new ArrayList();
 			if(list.size()>0){
-				empInfos = getEmpInfos(list);
+				empInfos = getEmpInfos(list,"");
 			}
-			String viewsql = "ppp.dname,ppp.pname,ppp.mpname,ppp.mpa,ppp.apname,ppp.apa";
+			String viewsql = "ppp.dname,ppp.pname,ppp.mpname,ppp.mpa,ppp.apname,ppp.apa,ppp.dpname,ppp.dpa";
 	        int pageCount = page.getPageCount();
 	        int recordCount = page.getRecordCount();
 	        JacksonUtil util = new JacksonUtil();
@@ -490,17 +520,60 @@ public class WatchshowAction extends BaseActionSupport{
 		System.out.println("进入值班信息查询。。。。。。");
 		List showList = new ArrayList();
 		List empInfos = new ArrayList();
-		String sql = "select whir$watchtab_id,concat(whir$watchtab_dates,concat(',',whir$watchtab_weeks)) dates,whir$watchtab_mpa,whir$watchtab_mpname,whir$watchtab_apa,whir$watchtab_apname " +
+		String sql = "select whir$watchtab_id,concat(whir$watchtab_dates,concat(',',whir$watchtab_weeks)) dates,whir$watchtab_mpa,whir$watchtab_mpname,whir$watchtab_apa,whir$watchtab_apname,whir$watchtab_dpa,whir$watchtab_dpname " +
 				"from whir$watchtab where whir$watchtab_postno='"+postId+"' and (whir$watchtab_dates between '"+dateFrom+"' and '"+dateEnd+"') order by whir$watchtab_dates";
+		String dutyNumber = getDutyNumber(postId);
 		showList = new WatchArrangeUtils().getList(sql);
 		if(showList.size()>0){
-			empInfos = getEmpInfos(showList);
+			empInfos = getEmpInfos(showList,dutyNumber);
 		}
 		return empInfos;
 		
 	}
+	
+	public String getDutyNumber(String postId){
+		//默认值班人员数为一个
+		String dutyNumber = "1";
+		DataSourceBase dsb = new DataSourceBase();
+	    Connection conn = null;
+	    Statement stmt = null;
+	    try {
+	    	String sql = "";
+	    	conn = dsb.getDataSource().getConnection();
+	    	stmt = conn.createStatement();
+	    	ResultSet rs = null;
+	    	sql = "select whir$posttab_dutynumber from whir$posttab where whir$posttab_id='"+postId+"'";
+			rs = stmt.executeQuery(sql);
+	    	while (rs.next()){
+	    		dutyNumber=rs.getString(1);
+	    	}
+	    	rs.close();
+	    }catch (SQLException ex) {
+			ex.printStackTrace();
+			try{
+		        if (stmt != null) {
+		          stmt.close();
+		        }
+		        if (conn != null){
+		        	conn.close();
+		        }
+		     }catch (SQLException localSQLException1){
+		     }
+		 }finally{
+	    	try{
+	    		if (stmt != null){
+	    			stmt.close();
+	    			}
+	    		if (conn != null){
+	    			conn.close();
+	    		}
+	    	}catch (SQLException localSQLException2) {
+	    	}
+		 }
+	    return dutyNumber;
+	}
 	//获取员工账号信息
-	public List getEmpInfos(List showList){
+	public List getEmpInfos(List showList,String dutyNumber){
 		List empInfoList = new ArrayList();
 		DataSourceBase dsb = new DataSourceBase();
 	    Connection conn = null;
@@ -510,57 +583,112 @@ public class WatchshowAction extends BaseActionSupport{
 	    	conn = dsb.getDataSource().getConnection();
 	    	stmt = conn.createStatement();
 	    	ResultSet rs = null;
-	    	for(int i=0;i<showList.size();i++){
-	    		Object[] objs = (Object[])showList.get(i);
-	    		String[] empObj = new String[6];
-	    		empObj[0] = objs[0].toString();
-	    		empObj[1] = objs[1].toString();
-	    		empObj[2] = "";
-	    		empObj[3] = "";
-	    		empObj[4] = "";
-	    		empObj[5] = "";
-	    		String mpa = (String)objs[2];
-        		if(mpa.startsWith("$")){
-        			String[] mailtoIds = (mpa.substring(1) + "$").split("\\$\\$");
-        			for(int j=0;j<mailtoIds.length;j++){
-        				sql = "select concat(empname,empmobilephone) infos,useraccounts from org_employee where emp_id='"+mailtoIds[j]+"'";
-        				rs = stmt.executeQuery(sql);
-        		    	while (rs.next()){
-        		    		empObj[2]+=rs.getString(1)+",";
-        		    		empObj[3]+=rs.getString(2)+",";
-        		    	}
+	    	if(dutyNumber!=null && dutyNumber.equals("2")){
+	    		for(int i=0;i<showList.size();i++){
+		    		Object[] objs = (Object[])showList.get(i);
+		    		String[] empObj = new String[6];
+		    		empObj[0] = objs[0].toString();
+		    		empObj[1] = objs[1].toString();
+		    		empObj[2] = "";
+		    		empObj[3] = "";
+		    		empObj[4] = "";
+		    		empObj[5] = "";
+		    		String mpa = (String)objs[2];
+	        		if(mpa.startsWith("$")){
+	        			String[] mailtoIds = (mpa.substring(1) + "$").split("\\$\\$");
+	        			for(int j=0;j<mailtoIds.length;j++){
+	        				sql = "select concat(empname,empmobilephone) infos,useraccounts from org_employee where emp_id='"+mailtoIds[j]+"'";
+	        				rs = stmt.executeQuery(sql);
+	        		    	while (rs.next()){
+	        		    		if(j==0){
+	        		    			empObj[2]+=rs.getString(1)+",";
+		        		    		empObj[3]+=rs.getString(2)+",";
+	        		    		} else {
+	        		    			empObj[4]+=rs.getString(1)+",";
+		        		    		empObj[5]+=rs.getString(2)+",";
+	        		    		}
+	        		    	}
+		        		}
 	        		}
-        		} else{
-        			sql = "select concat(empname,empmobilephone) infos,useraccounts from org_employee where emp_id='"+mpa+"'";
-    				rs = stmt.executeQuery(sql);
-    		    	while (rs.next()){
-    		    		empObj[2]=rs.getString(1)+",";
-    		    		empObj[3]=rs.getString(2)+",";
-    		    	}
-        		}
-        		if(objs[4] !=null && !"".equals(objs[4]) && !"null".equals(objs[4])){
-        			String apa = (String)objs[4];
-    	    		if(apa.startsWith("$")){
-    	    			String[] mailtoId = (apa.substring(1) + "$").split("\\$\\$");
-            			for(int j=0;j<mailtoId.length;j++){
-            				sql = "select concat(empname,empmobilephone) infos,useraccounts from org_employee where emp_id='"+mailtoId[j]+"'";
-            				rs = stmt.executeQuery(sql);
-            		    	while (rs.next()){
-            		    		empObj[4]+=rs.getString(1)+",";
-            		    		empObj[5]+=rs.getString(2)+",";
-            		    	}
-    	        		}
-    	    		}else{	
-    	    			sql = "select concat(empname,empmobilephone) infos,useraccounts from org_employee where emp_id='"+apa+"'";
-        				rs = stmt.executeQuery(sql);
-        		    	while (rs.next()){
-        		    		empObj[4]=rs.getString(1)+",";
-        		    		empObj[5]=rs.getString(2)+",";
-        		    	}
-    	    		
-    	    		}
-        		}
-	    		empInfoList.add(empObj);
+		    		empInfoList.add(empObj);
+		    	}
+	    	} else {
+		    	for(int i=0;i<showList.size();i++){
+		    		Object[] objs = (Object[])showList.get(i);
+		    		String[] empObj = new String[8];
+		    		empObj[0] = objs[0].toString();
+		    		empObj[1] = objs[1].toString();
+		    		empObj[2] = "";
+		    		empObj[3] = "";
+		    		empObj[4] = "";
+		    		empObj[5] = "";
+		    		empObj[6] = "";
+		    		empObj[7] = "";
+		    		String mpa = (String)objs[2];
+	        		if(mpa.startsWith("$")){
+	        			String[] mailtoIds = (mpa.substring(1) + "$").split("\\$\\$");
+	        			for(int j=0;j<mailtoIds.length;j++){
+	        				sql = "select concat(empname,empmobilephone) infos,useraccounts from org_employee where emp_id='"+mailtoIds[j]+"'";
+	        				rs = stmt.executeQuery(sql);
+	        		    	while (rs.next()){
+	        		    		empObj[2]+=rs.getString(1)+",";
+	        		    		empObj[3]+=rs.getString(2)+",";
+	        		    	}
+		        		}
+	        		} else{
+	        			sql = "select concat(empname,empmobilephone) infos,useraccounts from org_employee where emp_id='"+mpa+"'";
+	    				rs = stmt.executeQuery(sql);
+	    		    	while (rs.next()){
+	    		    		empObj[2]=rs.getString(1)+",";
+	    		    		empObj[3]=rs.getString(2)+",";
+	    		    	}
+	        		}
+	        		if(objs[4] !=null && !"".equals(objs[4]) && !"null".equals(objs[4])){
+	        			String apa = (String)objs[4];
+	    	    		if(apa.startsWith("$")){
+	    	    			String[] mailtoId = (apa.substring(1) + "$").split("\\$\\$");
+	            			for(int j=0;j<mailtoId.length;j++){
+	            				sql = "select concat(empname,empmobilephone) infos,useraccounts from org_employee where emp_id='"+mailtoId[j]+"'";
+	            				rs = stmt.executeQuery(sql);
+	            		    	while (rs.next()){
+	            		    		empObj[4]+=rs.getString(1)+",";
+	            		    		empObj[5]+=rs.getString(2)+",";
+	            		    	}
+	    	        		}
+	    	    		}else{	
+	    	    			sql = "select concat(empname,empmobilephone) infos,useraccounts from org_employee where emp_id='"+apa+"'";
+	        				rs = stmt.executeQuery(sql);
+	        		    	while (rs.next()){
+	        		    		empObj[4]=rs.getString(1)+",";
+	        		    		empObj[5]=rs.getString(2)+",";
+	        		    	}
+	    	    		
+	    	    		}
+	        		}
+	        		if(objs[6] !=null && !"".equals(objs[6]) && !"null".equals(objs[6])){
+	        			String dpa = (String)objs[6];
+	    	    		if(dpa.startsWith("$")){
+	    	    			String[] mailtoId = (dpa.substring(1) + "$").split("\\$\\$");
+	            			for(int j=0;j<mailtoId.length;j++){
+	            				sql = "select concat(empname,empmobilephone) infos,useraccounts from org_employee where emp_id='"+mailtoId[j]+"'";
+	            				rs = stmt.executeQuery(sql);
+	            		    	while (rs.next()){
+	            		    		empObj[6]+=rs.getString(1)+",";
+	            		    		empObj[7]+=rs.getString(2)+",";
+	            		    	}
+	    	        		}
+	    	    		}else{	
+	    	    			sql = "select concat(empname,empmobilephone) infos,useraccounts from org_employee where emp_id='"+dpa+"'";
+	        				rs = stmt.executeQuery(sql);
+	        		    	while (rs.next()){
+	        		    		empObj[6]=rs.getString(1)+",";
+	        		    		empObj[7]=rs.getString(2)+",";
+	        		    	}
+	    	    		
+	    	    		}
+	        		}
+		    		empInfoList.add(empObj);
+		    	}
 	    	}
 	    	rs.close();
 	    }catch (SQLException ex) {
